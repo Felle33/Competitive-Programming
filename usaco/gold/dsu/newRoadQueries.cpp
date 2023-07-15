@@ -13,8 +13,9 @@
 #define rep(X,Y) for (int (X) = 0;(X) < (Y);++(X))
 #define reps(X,S,Y) for (int (X) = S;(X) < (Y);++(X))
 
-typedef long long ll;
 using namespace std;
+typedef long long ll;
+typedef pair<int,int> pii;
 
 const ll MOD = 1e9 + 7;
 const ll DIM = 1e6;
@@ -27,21 +28,33 @@ struct DSU {
 	int n;
 	vector<int> p;
     vector<unsigned int> r;
+	vector<int> age;
 
 	DSU() {}
 
     DSU(int N) {
+		n = N;
         p = vector<int>(N);
         r = vector<unsigned int>(N, 1);
+        age = vector<int>(N);
 
         for(int i = 0; i < N; i++){
             p[i] = i;
         }
     }
 
-    int get(int x) { return p[x] == x ? x : p[x] = get(p[x]); }
+    int get(int x) { 
+		if(p[x] == x) return x;
+		return get(p[x]);
+	}
 
-    bool unite(int x, int y) {
+	void get_parents(int x, vector<int>& v) {
+		v.push_back(x);
+		if(p[x] == x) return;
+		get_parents(p[x], v);
+	}
+
+    bool unite(int x, int y, int a) {
         x = get(x), y = get(y);
         if(x == y) return false;
         if(r[x] == r[y]) 
@@ -49,14 +62,16 @@ struct DSU {
         
         if(r[x] > r[y]){
 			p[y] = x;
+			age[y] = a;
 		}
         else {
 			p[x] = y;
+			age[x] = a;
 		}  
         return true;
     }
 
-    void reset() {
+	void reset() {
 		for(int i = 0; i < n; i++){
             p[i] = i;
 			r[i] = 1;
@@ -64,56 +79,43 @@ struct DSU {
 	}
 };
 
-ll area(vector<ll> rect) {
-	ll width = rect[2] - rect[0];
-	ll height = rect[3] - rect[1];
-	return width * height;
-}
-
-// return 0 if it doesn't intersect
-int inter_area(vector<ll> s1, vector<ll> s2) {
-	int bl_a_x = s1[0], bl_a_y = s1[1], tr_a_x = s1[2], tr_a_y = s1[3];
-	int bl_b_x = s2[0], bl_b_y = s2[1], tr_b_x = s2[2], tr_b_y = s2[3];
-
-	ll l1 = min(tr_a_x, tr_b_x) - max(bl_a_x, bl_b_x);
-	ll l2 = min(tr_a_y, tr_b_y) - max(bl_a_y, bl_b_y);
-
-	if(l1 <= 0 || l2 <= 0) return 0;
-
-	return l1 * l2;
-}
-
-// return true if x,y is covered by the rectangle s
-bool covered(ll x, ll y, vector<ll> s){
-	return x >= s[0] && x <= s[2] && y >= s[1] && y <= s[3];
-}
-
-ll exponentiation(ll b, ll e){
-    ll res = 1;
-    b %= MOD;
-    while(e > 0){
-        if(e & 1)
-            res = res * b % MOD;
-        
-        b = b * b % MOD;
-        e >>= 1;
-    }
-
-    return res;
-}
-
 void solve(){
-    
+	int n, m, q;
+	cin >> n;
+
+	DSU dsu = DSU(n);
+	rep(i, m) {
+		int a, b;
+		cin >> a >> b;
+
+		dsu.unite(a, b, i + 1);
+	}
+
+	// LCA and take the min time
+	rep(i, q) {
+		int a, b;
+		cin >> a >> b;
+		vector<int> v1, v2, v_intersection;
+		dsu.get_parents(a, v1);
+		dsu.get_parents(a, v2);
+
+		std::set_intersection(v1.begin(), v1.end(), v2.begin(), v2.end(),
+                          std::back_inserter(v_intersection));
+		
+		int t = 1e9;
+		for(int x : v_intersection) {
+			t = min(t, dsu.age[t]);
+		}
+	}
+	
 }
 
 int main(){
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
 
-    int t;
-    cin >> t;
+    //freopen("tractor.in", "r", stdin);
+	//freopen("tractor.out", "w", stdout);
 
-    while(t--){
-        solve();
-    }
+    solve();
 }

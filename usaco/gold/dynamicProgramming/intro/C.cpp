@@ -25,17 +25,26 @@ vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
 void solve(){
-    
+    int n, m;
+    cin >> n >> m;
+
+    vector<vector<int>> dp(n, vector<int>(m));
+    dp[n - 1][m - 1] = 1;
+    for(int i = n - 2; i >= 0; i--) {
+        for(int j = m - 2; j >= 0; j--) {
+            dp[i][j] = ((i + 1 < n && j + 2 < m) ? dp[i + 1][j + 2] : 0) +
+            ((i + 2 < n && j + 1 < m) ? dp[i + 2][j + 1] : 0);
+        }
+    }
+
+    cout << dp[0][0];
 }
 
 int main(){
+    freopen("knight.in", "r", stdin);
+	freopen("knight.out", "w", stdout);
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
 
-    int t;
-    cin >> t;
-
-    while(t--){
-        solve();
-    }
+    solve();
 }

@@ -11,8 +11,9 @@
 
 #define all(x) (x).begin(), (x).end()
 
-typedef long long ll;
 using namespace std;
+typedef long long ll;
+typedef pair<int,int> pii;
 
 const ll MOD = 1e9 + 7;
 const ll DIM = 1e6;
@@ -24,10 +25,12 @@ string DIR = "RDUL";
 struct DSU {
 	vector<int> p;
     vector<unsigned int> r;
+	vector<unsigned int> size;
 
     DSU(int N) {
         p = vector<int>(N);
         r = vector<unsigned int>(N, 1);
+        size = vector<unsigned int>(N, 1);
 
         for(int i = 0; i < N; i++){
             p[i] = i;
@@ -42,66 +45,73 @@ struct DSU {
         if(r[x] == r[y]) 
             r[x]++;
         
-        if(r[x] > r[y])
-            p[y] = x;
-        else 
-            p[x] = y;
+        if(r[x] > r[y]){
+			p[y] = x;
+			size[x] += size[y];
+		}
+        else {
+			p[x] = y;
+			size[y] += size[x];
+		}  
         return true;
     }
 };
+
+struct Edge {
+	int src, dest, cost;
+};
+
+bool cmp(const Edge& e1, const Edge& e2){
+	return e1.cost > e2.cost;
+}
 
 void solve(){
     int n, m;
 	cin >> n >> m;
 
-	vector<vector<int>> adj(n);
-	for (int i = 0; i < m; i++) {
-		int u, v;
-		cin >> u >> v;
+	vector<Edge> edges;
+	for (int i = 0; i < n - 1; i++) {
+		int u, v, c;
+		cin >> u >> v >> c;
 		u--;
 		v--;
-		adj[u].push_back(v);
-		adj[v].push_back(u);
+		edges.push_back({u, v, c});
 	}
 
-	// open[i] = whether the ith farm is open
-	vector<bool> open(n);
-	vector<int> rev(n);
-	for (int i = 0; i < n; i++) {
-		cin >> rev[i];
-		rev[i]--;
+	sort(all(edges), cmp);
+
+	vector<tuple<int, int, int>> q(m);
+	for(int i = 0; i < m; i++){
+		int k, v;
+		cin >> k >> v;
+		v--;
+		q[i] = {k, v, i};
 	}
 
-	DSU dsu(n);
-	reverse(rev.begin(), rev.end());
+	sort(q.rbegin(), q.rend());
 
-	open[rev[0]] = true;
-	// one node is always connected
-	vector<string> ans = {"YES"};
-
-	// connected components
-	int cc = 1;
-	for (int i = 1; i < n; i++) {
-		cc++;
-		open[rev[i]] = true;
-		for (int j : adj[rev[i]]) {
-			if (open[j]) {
-				if (dsu.unite(j, rev[i])) { cc--; }
-			}
+	int i = 0;
+	DSU dsu = DSU(n);
+	vector<int> res(m);
+	for(auto query : q){
+		for(; i < n && get<0>(query) <= edges[i].cost; i++) {
+			dsu.unite(edges[i].src, edges[i].dest);
 		}
-		ans.push_back(cc == 1 ? "YES" : "NO");
-	}
-	reverse(ans.begin(), ans.end());
 
-	for (const string &i : ans) { cout << i << '\n'; }
+		res[get<2>(query)] = dsu.size[dsu.get(get<1>(query))] - 1;
+	}
+
+	for(int x : res) {
+		cout << x << '\n';
+	}
 }
 
 int main(){
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
 
-    freopen("closing.in", "r", stdin);
-	freopen("closing.out", "w", stdout);
+    freopen("mootube.in", "r", stdin);
+	freopen("mootube.out", "w", stdout);
 
     solve();
 }

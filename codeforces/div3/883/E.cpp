@@ -13,9 +13,8 @@
 #define rep(X,Y) for (int (X) = 0;(X) < (Y);++(X))
 #define reps(X,S,Y) for (int (X) = S;(X) < (Y);++(X))
 
-using namespace std;
 typedef long long ll;
-typedef pair<int,int> pii;
+using namespace std;
 
 const ll MOD = 1e9 + 7;
 const ll DIM = 1e6;
@@ -25,17 +24,31 @@ vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
 void solve(){
-    
+    int n;
+    cin >> n;
+    for(int i = 0; i < n; i++) {
+        ll goal;
+        cin >> goal;
+
+        bool found = false;
+        for(ll i = 2; (i * i + i + 1) <= goal && !found; i++) {
+            for(ll sum = i * i + i + 1, ext = i * i; sum <= goal && !found; ) {
+                if(sum == goal) {
+                    found = true;
+                    cout << "YES" << '\n';
+                }
+                sum += ext * i;
+                ext *= i;
+            }
+        }
+
+        if(!found) cout << "NO" << '\n';
+    }
 }
 
 int main(){
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
 
-    int t;
-    cin >> t;
-
-    while(t--){
-        solve();
-    }
+    solve();
 }

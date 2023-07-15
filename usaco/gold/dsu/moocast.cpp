@@ -10,11 +10,10 @@
 #include <iomanip>
 
 #define all(x) (x).begin(), (x).end()
-#define rep(X,Y) for (int (X) = 0;(X) < (Y);++(X))
-#define reps(X,S,Y) for (int (X) = S;(X) < (Y);++(X))
 
-typedef long long ll;
 using namespace std;
+typedef long long ll;
+typedef pair<int,int> pii;
 
 const ll MOD = 1e9 + 7;
 const ll DIM = 1e6;
@@ -31,6 +30,7 @@ struct DSU {
 	DSU() {}
 
     DSU(int N) {
+		n = N;
         p = vector<int>(N);
         r = vector<unsigned int>(N, 1);
 
@@ -56,7 +56,7 @@ struct DSU {
         return true;
     }
 
-    void reset() {
+	void reset() {
 		for(int i = 0; i < n; i++){
             p[i] = i;
 			r[i] = 1;
@@ -64,56 +64,64 @@ struct DSU {
 	}
 };
 
-ll area(vector<ll> rect) {
-	ll width = rect[2] - rect[0];
-	ll height = rect[3] - rect[1];
-	return width * height;
-}
+DSU dsu;
+int n;
 
-// return 0 if it doesn't intersect
-int inter_area(vector<ll> s1, vector<ll> s2) {
-	int bl_a_x = s1[0], bl_a_y = s1[1], tr_a_x = s1[2], tr_a_y = s1[3];
-	int bl_b_x = s2[0], bl_b_y = s2[1], tr_b_x = s2[2], tr_b_y = s2[3];
+bool good(int x, vector<pii>& cows) {
+	int rem = n - 1;
+	for(int i = 0; i < n; i++){
+		for(int j = 0; j < n; j++) {
+			if (i == j) continue;
 
-	ll l1 = min(tr_a_x, tr_b_x) - max(bl_a_x, bl_b_x);
-	ll l2 = min(tr_a_y, tr_b_y) - max(bl_a_y, bl_b_y);
+			// already in the same set
+			if(dsu.get(i) == dsu.get(j)) continue;
+			int dist_x = abs(cows[i].first - cows[j].first) * abs(cows[i].first - cows[j].first);
+			int dist_y = abs(cows[i].second - cows[j].second) * abs(cows[i].second - cows[j].second);
 
-	if(l1 <= 0 || l2 <= 0) return 0;
+			if ((dist_x + dist_y) <= x) {
+				dsu.unite(i, j);
+				rem--;
+			}
+		}
+	}
 
-	return l1 * l2;
-}
-
-// return true if x,y is covered by the rectangle s
-bool covered(ll x, ll y, vector<ll> s){
-	return x >= s[0] && x <= s[2] && y >= s[1] && y <= s[3];
-}
-
-ll exponentiation(ll b, ll e){
-    ll res = 1;
-    b %= MOD;
-    while(e > 0){
-        if(e & 1)
-            res = res * b % MOD;
-        
-        b = b * b % MOD;
-        e >>= 1;
-    }
-
-    return res;
+	return rem == 0;
 }
 
 void solve(){
-    
+	cin >> n;
+
+	vector<pii> cows(n);
+	for (int i = 0; i < n; i++) {
+		int x, y;
+		cin >> x >> y;
+		cows[i].first = x;
+		cows[i].second = y;
+	}
+
+	dsu = DSU(n);
+	int r = 2e9, l = -1;
+	while(l + 1 < r) {
+		int x = l + (r - l) / 2;
+
+		if(good(x, cows)) {
+			r = x;
+		} else {
+			l = x;
+		}
+
+		dsu.reset();
+	}
+
+	cout << r << '\n';
 }
 
 int main(){
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
 
-    int t;
-    cin >> t;
+    freopen("moocast.in", "r", stdin);
+	freopen("moocast.out", "w", stdout);
 
-    while(t--){
-        solve();
-    }
+    solve();
 }
