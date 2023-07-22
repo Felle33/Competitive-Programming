@@ -55,36 +55,16 @@ ll exponentiation(ll b, ll e){
     return res;
 }
 
-int h, g;
-vector<pair<int, int>> holsteins;
-vector<pair<int, int>> guernseys;
-
 int dis(int firstX, int firstY, int secondX, int secondY){
-    return abs(firstX - secondX) * abs(firstX - secondX) + abs(firstY - secondY) * abs(firstY - secondY);
-}
-
-int minPath(int holToWrite, int gueToWrite, int x, int y){
-    if(holToWrite == 0 && gueToWrite == 0) return 0;
-
-    ll res1 = 1e9, res2 = 1e9;
-
-    if(holToWrite > 1 || (holToWrite == 1 && gueToWrite == 0)){
-        res1 = minPath(holToWrite - 1, gueToWrite, holsteins[h - holToWrite].first, holsteins[h - holToWrite].second) +
-        dis(x, y, holsteins[h - holToWrite].first, holsteins[h - holToWrite].second);
-    } 
-
-    if(gueToWrite >= 1){
-        res2 = minPath(holToWrite, gueToWrite - 1, guernseys[g - gueToWrite].first, guernseys[g - gueToWrite].second) +
-        dis(x, y, guernseys[g - gueToWrite].first, guernseys[g - gueToWrite].second);
-    }
-
-    return min(res1, res2);
+    return (firstX - secondX) * (firstX - secondX) + (firstY - secondY) * (firstY - secondY);
 }
 
 void solve(){
+    int h, g;
     cin >> h >> g;
-    holsteins.resize(h);
-    guernseys.resize(g);
+
+    vector<pair<int, int>> holsteins(h);
+    vector<pair<int, int>> guernseys(g);
 
     for(int i = 0; i < h; i++){
         cin >> holsteins[i].first >> holsteins[i].second;
@@ -94,7 +74,34 @@ void solve(){
         cin >> guernseys[i].first >> guernseys[i].second;
     }
 
-    cout << minPath(h - 1, g, holsteins[0].first, holsteins[0].second);
+    /**min_dist[i][j][k] represents the minimum distance for
+	 * Farmer John to visit the first i Holsteins and the first
+	 * j Guernseys, given that Farmer John is currently at
+	 * k (0: ith Holstein, 1: ith Guernsey)
+     * **/
+    vector<vector<vector<ll>>> min_dist(h + 1, vector<vector<ll>>(g + 1, vector<ll>(2, 1e18)));
+    
+    min_dist[1][0][0] = 0;
+
+    for(int i = 1; i < h; i++) {
+        min_dist[i + 1][0][0] = min_dist[i][0][0] +
+        dis(holsteins[i].first, holsteins[i].second, holsteins[i - 1].first, holsteins[i - 1].second);
+    }
+
+    for(int i = 1; i < g; i++) {
+        min_dist[1][i + 1][] = min_dist[0][i] +
+        dis(guernseys[i].first, guernseys[i].second, guernseys[i - 1].first, guernseys[i - 1].second);
+    }
+
+    for(int i = 1; i <= h; i++) {
+        for(int j = 1; j <= g; j++) {
+            // from holstein i - 1 to i
+            int add1 = min_dist[i - 1][j] + dis()
+            min_dist[i][j] = min(min_dist[i - 1][j], min_dist[i][j - 1]);
+        }
+    }
+    
+    cout << min_dist[h - 1][g - 1] << '\n';
 }
 
 int main(){
