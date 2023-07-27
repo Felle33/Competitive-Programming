@@ -5,79 +5,93 @@ using namespace std;
 #define vll vector<long long>
 #define pi pair<int,int>
 
-
 struct SegmentTree {
-    vll tree;
+    int size;
+    vector<ll> tree;
 
-    SegmentTree(vll numbers){
-        int n = numbers.size();
-        tree.resize(n * 2);
-    
-        for (int i = 0; i < n; i++){
-            tree[i + n] = numbers[i];
-        }
-    
-        for(int i = n - 1; i >= 1; i--){
-            tree[i] = tree[i * 2] + tree[i * 2 + 1];
-        }
+    SegmentTree(int n) {
+        size = 1;
+        while(size < n) size *= 2;
+        tree.resize(2 * size, 0LL);
     }
-    
-    ll findSum(int node_id, pi q, int l, int r){
-        if(q.first > r || q.second < l)
-            return 0;
-        
-        if(q.first <= l && r <= q.second)
-            return tree[node_id];
-        
-        int tmp = (l + r) / 2;
-    
-        return findSum(node_id * 2, q, l, tmp) + findSum(node_id * 2 + 1, q, tmp + 1, r);
+
+    void build(vll& numbers, int n){
+        build(numbers, 0, 0, size);
     }
-    
-    void updateValue(int k, int u){
-        k--;
-        int n = tree.size() / 2;
-        tree[k + n] = u;
-    
-        for(int i = (k + n) / 2; i >= 1; i /= 2){
-            tree[i] = tree[i * 2] + tree[i * 2 + 1];
+
+    void build(vll& numbers, int x, int lx, int rx) {
+        if(rx - lx == 1) {
+            if(lx < (int) numbers.size()) {
+                tree[lx] = numbers[lx];
+            }
         }
+
+        int mid = (lx + rx) / 2;
+        build(numbers, 2 * x + 1, lx, mid);
+        build(numbers, 2 * x + 2, mid, rx);
+        tree[x] = tree[2 * x + 1] + tree[2 * x + 2];
+    }
+
+    void set(int i, int v, int x, int lx, int rx) {
+        if(rx - lx == 1) {
+            tree[x] = v;
+            return;
+        }
+
+        int m = (lx + rx) / 2;
+        if(i < m) {
+            set(i, v, 2 * x + 1, lx, m);
+        } else {
+            set(i, v, 2 * x + 2, m, rx);
+        }
+        tree[x] = tree[2 * x + 1] + tree[2 * x + 2];
+    }
+
+    void set(int i, int v) {
+        set(i, v, 0, 0, size);
+    }
+
+    // l_query = da dove inizia la query
+    // r_query = dove finisce la query non compresa
+    // x = nodo
+    // lx = dove inizia la zona di competenza del nodo
+    // rx = dove finisce la zona di competenza del nodo non compreso
+    ll sum(int l_query, int r_query, int x, int lx, int rx) {
+        if(l_query >= rx || r_query <= lx) return 0;
+        if(l_query <= lx && rx <= r_query) return tree[x];
+        int mid = (lx + rx) / 2;
+        ll s1 = sum(l_query, r_query, 2 * x + 1, lx, mid);
+        ll s2 = sum(l_query, r_query, 2 * x + 2, mid, rx);
+        return s1 + s2;
+    }
+
+    ll sum(int l, int r) {
+        return sum(l, r, 0, 0, size);
     }
 };
  
 int main(){
-    int n, q;
-    cin >> n >> q;
-    vll numbers;
- 
-    for(int i = 0; i < n; i++){
+    int n, m;
+    cin >> n >> m;
+
+    SegmentTree segmentTree(n);
+    for(int i = 0; i < n; i++) {
         int a;
         cin >> a;
-        numbers.push_back(a);
+        segmentTree.set(i, a);
     }
- 
-    while(__popcount(numbers.size()) != 1){
-        numbers.push_back(0);
-    }
-    
-    SegmentTree segmentTree = SegmentTree(numbers);
- 
-    for (int i = 0; i < q; i++){
-        int o;
-        cin >> o;
- 
-        if(o == 1){ // Update at position k to value u
-            int k, u;
-            cin >> k >> u;
-            segmentTree.updateValue(k, u);
-        }
-        else{ // Find sum
-            pi q;
-            cin >> q.first >> q.second;
-            q.first--;
-            q.second--;
-            //FIXME
-            cout << segmentTree.findSum(1, q, 0, tree.size() / 2 - 1) << endl;
+
+    while(m--) {
+        int op;
+        cin >> op;
+        if(op == 1) {
+            int i, v;
+            cin >> i >> v;
+            segmentTree.set(i, v);
+        } else {
+            int l, r;
+            cin >> l >> r;
+            cout << segmentTree.sum(l, r) << '\n';
         }
     }
 }
