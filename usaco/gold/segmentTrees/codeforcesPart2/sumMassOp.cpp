@@ -8,55 +8,55 @@
 #include <map>
 #include <set>
 #include <iomanip>
-
+ 
 #define all(x) (x).begin(), (x).end()
 #define rep(X,Y) for (int (X) = 0;(X) < (Y);++(X))
 #define reps(X,S,Y) for (int (X) = S;(X) < (Y);++(X))
-
+ 
 using namespace std;
 typedef long long ll;
 typedef pair<int,int> pii;
-
+ 
 const ll MOD = 1e9 + 7;
 const ll DIM = 1e6;
 const ll INF = 1e9;
 vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
-
+ 
 struct SegmentTree {
     int size;
     vector<ll> tree;
-
+ 
     SegmentTree(int n) {
         size = 1;
         while(size < n) size *= 2;
         tree.resize(2 * size, 0LL);
     }
-
+ 
     void build(vector<ll>& numbers, int n){
         build(numbers, 0, 0, size);
     }
-
+ 
     void build(vector<ll>& numbers, int x, int lx, int rx) {
         if(rx - lx == 1) {
             if(lx < (int) numbers.size()) {
-                tree[lx] = numbers[lx];
+                tree[x] = numbers[lx];
             }
         }
-
+ 
         int mid = (lx + rx) / 2;
         build(numbers, 2 * x + 1, lx, mid);
         build(numbers, 2 * x + 2, mid, rx);
         tree[x] = tree[2 * x + 1] + tree[2 * x + 2];
     }
-
+ 
     void set(int i, int v, int x, int lx, int rx) {
         if(rx - lx == 1) {
             tree[x] = v;
             return;
         }
-
+ 
         int m = (lx + rx) / 2;
         if(i < m) {
             set(i, v, 2 * x + 1, lx, m);
@@ -65,11 +65,45 @@ struct SegmentTree {
         }
         tree[x] = tree[2 * x + 1] + tree[2 * x + 2];
     }
-
+ 
     void set(int i, int v) {
         set(i, v, 0, 0, size);
     }
-
+ 
+    void add(int l_query, int r_query, int v, int x, int lx, int rx) {
+        if(l_query >= rx || r_query <= lx) return;
+        if(l_query <= lx && rx <= r_query){
+            tree[x] += v;
+            return;
+        }
+ 
+        int mid = (lx + rx) / 2;
+        add(l_query, r_query, v, 2 * x + 1, lx, mid);
+        add(l_query, r_query, v, 2 * x + 2, mid, rx);
+    }
+ 
+    void add(int l, int r, int v) {
+        add(l, r, v, 0, 0, size);
+    }
+ 
+    ll get(int i, int x, int lx, int rx) {
+        if(rx - lx == 1) return tree[x];
+ 
+        int mid = (lx + rx) / 2;
+        ll res;
+        if(i < mid) {
+            res = get(i, 2 * x + 1, lx, mid);
+        } else {
+            res = get(i, 2 * x + 2, mid, rx);
+        }
+ 
+        return res + tree[x];
+    }
+ 
+    ll get(int i) {
+        return get(i, 0, 0, size);
+    }
+ 
     // l_query = da dove inizia la query
     // r_query = dove finisce la query non compresa
     // x = nodo
@@ -83,34 +117,32 @@ struct SegmentTree {
         ll s2 = sum(l_query, r_query, 2 * x + 2, mid, rx);
         return s1 + s2;
     }
-
+ 
     ll sum(int l, int r) {
         return sum(l, r, 0, 0, size);
     }
 };
  
 int main(){
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+ 
     int n, m;
     cin >> n >> m;
-
+ 
     SegmentTree segmentTree(n);
-    for(int i = 0; i < n; i++) {
-        int a;
-        cin >> a;
-        segmentTree.set(i, a);
-    }
-
+ 
     while(m--) {
         int op;
         cin >> op;
         if(op == 1) {
-            int i, v;
-            cin >> i >> v;
-            segmentTree.set(i, v);
+            int l, r, v;
+            cin >> l >> r >> v;
+            segmentTree.add(l, r, v);
         } else {
-            int l, r;
-            cin >> l >> r;
-            cout << segmentTree.sum(l, r) << '\n';
+            int i;
+            cin >> i;
+            cout << segmentTree.get(i) << '\n';
         }
     }
 }
