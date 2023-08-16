@@ -34,23 +34,6 @@ struct SegmentTree {
         tree.resize(2 * size, 0LL);
     }
  
-    void build(vector<ll>& numbers){
-        build(numbers, 0, 0, size);
-    }
- 
-    void build(vector<ll>& numbers, int x, int lx, int rx) {
-        if(rx - lx == 1) {
-            if(lx < (int) numbers.size()) {
-                tree[x] = numbers[lx];
-            }
-            return;
-        }
- 
-        int mid = (lx + rx) / 2;
-        build(numbers, 2 * x + 1, lx, mid);
-        build(numbers, 2 * x + 2, mid, rx);
-    }
- 
     void addOne(int i, int x, int lx, int rx) {
         if(rx - lx == 1) {
             tree[x] += 1;
@@ -63,28 +46,30 @@ struct SegmentTree {
         } else {
             addOne(i, 2 * x + 2, m, rx);
         }
+        tree[x] = tree[2 * x + 1] + tree[2 * x + 2];
     }
  
     void addOne(int i) {
         addOne(i, 0, 0, size);
     }
- 
-    ll get(int i, int x, int lx, int rx) {
-        if(rx - lx == 1) return tree[x];
- 
-        int mid = (lx + rx) / 2;
-        ll res;
-        if(i < mid) {
-            res = get(i, 2 * x + 1, lx, mid);
-        } else {
-            res = get(i, 2 * x + 2, mid, rx);
+
+    void minusOne(int i, int x, int lx, int rx) {
+        if(rx - lx == 1) {
+            tree[x] -= 1;
+            return;
         }
  
-        return res + tree[x];
+        int m = (lx + rx) / 2;
+        if(i < m) {
+            minusOne(i, 2 * x + 1, lx, m);
+        } else {
+            minusOne(i, 2 * x + 2, m, rx);
+        }
+        tree[x] = tree[2 * x + 1] + tree[2 * x + 2];
     }
  
-    ll get(int i) {
-        return get(i, 0, 0, size);
+    void minusOne(int i) {
+        minusOne(i, 0, 0, size);
     }
  
     // l_query = da dove inizia la query
@@ -121,4 +106,18 @@ int main(){
     SegmentTree left(n + 1), right(n + 1);
     left.addOne(nums[0]);
     
+    for(int i = 2; i < n; i++) {
+        right.addOne(nums[i]);
+    }
+
+    ll ans = 0;
+    for(int i = 1; i < n - 1; i++) {
+        ll leftMajor = left.sum(nums[i] + 1, n + 1);
+        ll rightMinor = right.sum(0, nums[i]);
+        ans += leftMajor * rightMinor;
+        left.addOne(nums[i]);
+        right.minusOne(nums[i + 1]);
+    }
+
+    cout << ans << '\n';
 }

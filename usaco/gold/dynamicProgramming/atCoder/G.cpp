@@ -10,8 +10,6 @@
 #include <iomanip>
 
 #define all(x) (x).begin(), (x).end()
-#define f first
-#define s second
 #define mp make_pair
 #define rep(X,Y) for (int (X) = 0;(X) < (Y);++(X))
 #define reps(X,S,Y) for (int (X) = S;(X) < (Y);++(X))
@@ -31,20 +29,41 @@ vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
+vvi adj;
+vi dp;
+
+int max_path(int node) {
+    if(adj[node].empty()) return 0;
+    if(dp[node] != -1) return dp[node];
+    int ans = 0;
+    for(int to : adj[node]) {
+        ans = max(ans, 1 + max_path(to));
+    }
+    dp[node] = ans;
+    return ans;
+}
+
 void solve(){
-    
+    int n, m; cin >> n >> m;
+    adj = vvi(n);
+    dp = vi(n, -1);
+    rep(i, m) {
+        int a, b; cin >> a >> b;
+        a--,b--;
+        adj[a].push_back(b);
+    }
+
+    int ans = 0;
+    rep(i, n) {
+        ans = max(ans, max_path(i));
+    }
+
+    cout << ans << '\n';
 }
 
 int main(){
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
-    std::cout.precision(10);
-    cout << std::fixed;
 
-    int t;
-    cin >> t;
-
-    while(t--){
-        solve();
-    }
+    solve();
 }

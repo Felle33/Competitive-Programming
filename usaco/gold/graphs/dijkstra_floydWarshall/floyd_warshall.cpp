@@ -21,6 +21,7 @@ typedef vector<int> vi;
 typedef vector<long long> vll;
 typedef vector<unsigned long long> vull;
 typedef vector<vector<int>> vvi;
+typedef vector<vector<long long>> vvll;
 typedef long long ll;
 typedef pair<int,int> pii;
 
@@ -32,19 +33,41 @@ vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
 void solve(){
-    
+    int n, m, q; cin >> n >> m >> q;
+    vvll dis(n, vll(n, INF));
+    rep(i, m) {
+        ll a, b, w;
+        cin >> a >> b >> w;
+        a--, b--;
+        dis[a][b] = min(dis[a][b], w);
+        dis[b][a] = min(dis[b][a], w);
+    }
+
+    rep(i, n) {
+        dis[i][i] = 0;
+    }
+
+    for(int k = 0; k < n; k++) {
+        for(int i = 0; i < n; i++) {
+            for(int j = 0; j < n; j++) {
+                if(dis[i][k] != INF && dis[k][j] != INF) {
+                    dis[i][j] = min(dis[i][j], dis[i][k] + dis[k][j]);
+                }
+            }
+        }
+    }
+
+    rep(i, q) {
+        int a, b;
+        cin >> a >> b;
+        a--, b--;
+        cout << (dis[a][b] == INF ? -1 : dis[a][b]) << '\n';
+    }
 }
 
 int main(){
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
-    std::cout.precision(10);
-    cout << std::fixed;
 
-    int t;
-    cin >> t;
-
-    while(t--){
-        solve();
-    }
+    solve();
 }

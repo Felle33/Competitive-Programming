@@ -44,5 +44,7 @@ void solve(){
 int main(){
     /* freopen("bcount.in", "r", stdin);
 	freopen("bcount.out", "w", stdout); */
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
     solve();
 } 

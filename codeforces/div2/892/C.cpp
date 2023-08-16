@@ -12,34 +12,46 @@
 #define all(x) (x).begin(), (x).end()
 #define f first
 #define s second
-#define mp make_pair
 #define rep(X,Y) for (int (X) = 0;(X) < (Y);++(X))
 #define reps(X,S,Y) for (int (X) = S;(X) < (Y);++(X))
 
 using namespace std;
-typedef vector<int> vi;
-typedef vector<long long> vll;
-typedef vector<unsigned long long> vull;
-typedef vector<vector<int>> vvi;
 typedef long long ll;
 typedef pair<int,int> pii;
 
 const ll MOD = 1e9 + 7;
 const ll DIM = 1e6;
-const ll INF = 1e15;
+const ll INF = 1e9;
 vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
 void solve(){
-    
+    int n;
+    cin >> n;
+
+    ll maximum = n;
+    ll min = 1;
+    ll cost = 0;
+    ll pmax = 0;
+    rep(i, n) {
+        if(i < n / 2) {
+            cost += (min * (i + 1));
+            pmax = max(pmax, min * (i + 1));
+            min++;
+        } else {
+            cost += (maximum * (i + 1));
+            pmax = max(pmax, maximum * (i + 1));
+            maximum--;
+        }
+    }
+
+    cout << cost - pmax << '\n';
 }
 
 int main(){
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
-    std::cout.precision(10);
-    cout << std::fixed;
 
     int t;
     cin >> t;
