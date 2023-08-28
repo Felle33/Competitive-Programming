@@ -30,14 +30,49 @@ vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
 void solve(){
-    
+    int n;
+    cin >> n;
+    vi a(n);
+    rep(i, n) cin >> a[i];
+    if(n == 1) {
+        cout << 1 << '\n';
+        return;
+    }
+
+    vi b;
+    int x = a[0];
+    b.push_back(x);
+    for(int l = 1; l < n; l++) {
+        if(a[l] != x) {
+            b.push_back(a[l]);
+            x = a[l];
+        }
+    }
+
+    int m = b.size();
+    if(m <= 2) {
+        cout << m << '\n';
+        return;
+    }
+
+    bool asc = (b[1] - b[0]) > 0;
+    int ans = 2;
+    for(int i = 2; i < m; i++) {
+        if(asc && b[i] - b[i - 1] < 0) {
+            asc = false;
+            ans++;
+        } else if(!asc && b[i] - b[i - 1] > 0) {
+            asc = true;
+            ans++;
+        }
+    }
+
+    cout << ans << '\n';
 }
 
 int main(){
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
-    std::cout.precision(10);
-    cout << std::fixed;
 
     int t;
     cin >> t;

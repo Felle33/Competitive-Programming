@@ -29,20 +29,33 @@ vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
+vll dp;
+ll minPath(ll n) {
+    if(n == 0) return 0;
+    if(dp[n] != INF) return dp[n];
+
+    ll ans = INF;
+    ll copy = n;
+    for(; copy > 0;) {
+        if(copy % 10 != 0) {
+            ans = min(ans, 1 + minPath(n - (copy % 10)));
+        }
+        copy /= 10;
+    }
+    dp[n] = ans;
+    return ans;
+}
+
 void solve(){
-    
+    int n; cin >> n;
+
+    dp = vll(n + 1, INF);
+    cout << minPath(n) << '\n';
 }
 
 int main(){
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
-    std::cout.precision(10);
-    cout << std::fixed;
 
-    int t;
-    cin >> t;
-
-    while(t--){
-        solve();
-    }
+    solve();
 }

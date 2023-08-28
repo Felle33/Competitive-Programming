@@ -19,6 +19,7 @@ typedef vector<int> vi;
 typedef vector<long long> vll;
 typedef vector<unsigned long long> vull;
 typedef vector<vector<int>> vvi;
+typedef vector<vector<long long>> vvll;
 typedef long long ll;
 typedef pair<int,int> pii;
 
@@ -29,20 +30,41 @@ vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
+struct Project {
+    ll start, end, reward;
+};
+
+bool cmp(Project p1, Project p2) {
+    return p1.end < p2.end;
+}
+
 void solve(){
-    
+    int n; cin >> n;
+    vector<Project> projects(n);
+    rep(i, n) {
+        cin >> projects[i].start >> projects[i].end >> projects[i].reward;
+    }
+
+    sort(all(projects), cmp);
+    map<ll, ll> dp;
+    dp[0] = 0;
+    ll best = 0;
+
+    for(Project project : projects) {
+        ll bestTaking = project.reward;
+        auto it = dp.lower_bound(project.start);
+        --it;
+        bestTaking += it->second;
+        best = max(best, bestTaking);
+        dp[project.end] = best;
+    }
+
+    cout << dp[projects[n - 1].end] << '\n';
 }
 
 int main(){
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
-    std::cout.precision(10);
-    cout << std::fixed;
 
-    int t;
-    cin >> t;
-
-    while(t--){
-        solve();
-    }
+    solve();
 }

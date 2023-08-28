@@ -30,14 +30,46 @@ vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
 void solve(){
-    
+    int n, k;
+    cin >> n >> k;
+
+    if(k >= 31) {
+        ll ans = 1;
+        for(int i = 1; i <= n; i = i << 1) {
+            if((i & n) >= 1) {
+                ans += i;
+            }
+        }
+        cout << ans << '\n';
+    } else {
+        ll maxNum = 0;
+        for(int i = 0; i < k; i++) {
+            maxNum += (1 << i);
+        }
+
+        if(maxNum < n) {
+            ll ans = 1;
+            for(int i = 1; i <= maxNum; i = i << 1) {
+                if((i & maxNum) >= 1) {
+                    ans += i;
+                }
+            }
+            cout << ans << '\n';
+        } else {
+            ll ans = 1;
+            for(int i = 1; i <= n; i = i << 1) {
+                if((i & n) >= 1) {
+                    ans += i;
+                }
+            }
+            cout << ans << '\n';
+        }
+    }
 }
 
 int main(){
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
-    std::cout.precision(10);
-    cout << std::fixed;
 
     int t;
     cin >> t;

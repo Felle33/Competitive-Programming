@@ -29,15 +29,47 @@ vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
+bool cmp(pair<char, int> p1, pair<char, int> p2) {
+    return p1.first < p2.first;
+}
+
 void solve(){
-    
+    int n, k; cin >> n >> k;
+    string s;
+    cin >> s;
+
+    vector<char> characters(n);
+    vector<char> vpari, vdispari;
+    for(int i = 0; i < n; i++) {
+        characters[i] = s[i];
+        if(i % 2 == 0) {
+            vpari.push_back(s[i]);
+        } else {
+            vdispari.push_back(s[i]);
+        }
+    }
+
+    sort(all(characters));
+    sort(all(vpari));
+    sort(all(vdispari));
+    if(k % 2 == 1) {
+        int n = vpari.size();
+        for(int i = 0; i < n; i++) {
+            cout << vpari[i];
+            if(i < (int) vdispari.size()) cout << vdispari[i];
+        }
+    } else {
+        for(int i = 0; i < n; i++) {
+            cout << characters[i];
+        }
+    }
+
+    cout << '\n';
 }
 
 int main(){
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
-    std::cout.precision(10);
-    cout << std::fixed;
 
     int t;
     cin >> t;

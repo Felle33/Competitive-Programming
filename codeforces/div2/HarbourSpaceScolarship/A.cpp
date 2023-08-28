@@ -29,15 +29,45 @@ vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
+bool increasing(vector<int>& a) {
+    int n = a.size();
+    for(int i = 1; i < n; i++) {
+        if(a[i] <= a[i - 1]) return false;
+    }
+    return true;
+}
+
 void solve(){
-    
+    int n, x, y; cin >> x >> y >> n;
+    vector<int> a;
+    a.push_back(y);
+    for(int i = 1, dif = 1; i < n; i++, dif++) {
+        int j = a.back();
+        if(i == n - 1) {
+            if(x > j - dif) a.push_back(1e9);
+            else a.push_back(x);
+        } else {
+            
+            a.push_back(j - dif);
+        }
+    }
+
+    reverse(all(a));
+
+    if(increasing(a)) {
+        for(int x : a) {
+            cout << x << ' ';
+        }
+    } else {
+        cout << -1;
+    }
+
+    cout << '\n';
 }
 
 int main(){
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
-    std::cout.precision(10);
-    cout << std::fixed;
 
     int t;
     cin >> t;

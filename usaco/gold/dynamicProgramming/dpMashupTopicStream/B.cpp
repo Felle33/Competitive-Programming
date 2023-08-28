@@ -10,6 +10,8 @@
 #include <iomanip>
 
 #define all(x) (x).begin(), (x).end()
+#define f first
+#define s second
 #define mp make_pair
 #define rep(X,Y) for (int (X) = 0;(X) < (Y);++(X))
 #define reps(X,S,Y) for (int (X) = S;(X) < (Y);++(X))
@@ -30,19 +32,35 @@ vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
 void solve(){
-    
+    int n, k; cin >> n >> k;
+    string str; cin >> str;
+
+    vector<bool> chars(26);
+    rep(i, k) {
+        char c; cin >> c;
+        chars[c - 'a'] = true;
+    }
+
+    ll ans = 0;
+    ll l = 0, r = 0;
+    for(; r < n; r++) {
+        if(!chars[str[r] - 'a']) {
+            ll length = r - l;
+            ans += (length + 1) * length / 2;
+            l = r + 1;
+        }
+    }
+    if(l != r) {
+        ll length = r - l;
+        ans += (length + 1) * length / 2;
+    }
+
+    cout << ans << '\n';
 }
 
 int main(){
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
-    std::cout.precision(10);
-    cout << std::fixed;
 
-    int t;
-    cin >> t;
-
-    while(t--){
-        solve();
-    }
+    solve();
 }

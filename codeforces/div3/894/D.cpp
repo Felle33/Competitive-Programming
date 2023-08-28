@@ -25,19 +25,29 @@ typedef pair<int,int> pii;
 const ll MOD = 1e9 + 7;
 const ll DIM = 1e6;
 const ll INF = 1e15;
+const int MAX = 2e5 + 1;
 vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
 void solve(){
+    ll n; cin >> n;
+
+    ll doubleN = 2 * n;
+    double rad = (-1 + sqrt(1 + 4 * doubleN)) / 2;
+    ll f = floor(rad) + 1;
     
+    if((f * (f - 1) / 2) == doubleN) {
+        cout << f << '\n';
+    } else {
+        f += (n - f * (f - 1) / 2);
+        cout << f << '\n';
+    }
 }
 
 int main(){
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
-    std::cout.precision(10);
-    cout << std::fixed;
 
     int t;
     cin >> t;

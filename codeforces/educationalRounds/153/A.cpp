@@ -30,14 +30,30 @@ vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
 void solve(){
-    
+    string s; cin >> s;
+    if(s == "()") {
+        cout << "NO\n";
+        return;
+    }
+
+    cout << "YES\n";
+    int n = s.size();
+    for(int i = 0; i < n - 1; i++) {
+        if(s.substr(i, 2) == ")(") {
+            for(int j = 0; j < n; j++) cout << "(";
+            for(int j = 0; j < n; j++) cout << ")";
+            cout << '\n';
+            return;
+        }
+    }
+
+    for(int j = 0; j < n; j++) cout << "()";
+    cout << '\n';
 }
 
 int main(){
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
-    std::cout.precision(10);
-    cout << std::fixed;
 
     int t;
     cin >> t;

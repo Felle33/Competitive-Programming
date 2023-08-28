@@ -30,19 +30,40 @@ vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
 void solve(){
-    
+    int n, k; cin >> n >> k;
+    vector<ll> lec(n), awake(n);
+    rep(i, n) cin >> lec[i];
+    rep(i, n) cin >> awake[i];
+
+    vector<ll> pref(n);
+    pref[0] = lec[0];
+    for(int i = 1; i < n; i++) pref[i] = pref[i - 1] + lec[i];
+
+    vector<ll> p(n);
+    p[0] = lec[0] * awake[0];
+    for(int i = 1; i < n; i++) p[i] = p[i - 1] + lec[i] * awake[i];
+
+    vector<ll> s(n);
+    s[n - 1] = lec[n - 1] * awake[n - 1];
+    for(int i = n - 2; i >= 0; i--) s[i] = s[i + 1] + lec[i] * awake[i];
+
+    ll ans = 0;
+    for(int i = 0; i < n - k + 1; i++) {
+        ll cur = 0;
+        if(i > 0) cur += p[i - 1];
+        if(i < n - k) cur += s[i + k];
+
+        cur += pref[i + k - 1];
+        if(i > 0) cur -= pref[i - 1];
+        ans = max(ans, cur);
+    }
+
+    cout << ans << '\n';
 }
 
 int main(){
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
-    std::cout.precision(10);
-    cout << std::fixed;
 
-    int t;
-    cin >> t;
-
-    while(t--){
-        solve();
-    }
+    solve();
 }

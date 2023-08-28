@@ -29,15 +29,38 @@ vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
+int n;
+vll a;
+
 void solve(){
+    cin >> n;
+    a.resize(n);
+    ll b = 0;
+    rep(i, n) {
+        cin >> a[i];
+        b += (a[i] - 1);
+    }
+
+    if(n == 1) {
+        cout << "NO\n";
+        return;
+    }
+
+    for(int i = 0; i < n; i++) {
+        if(a[i] == 1) b--;
+        if(b < 0) {
+            cout << "NO\n";
+            return;
+        }
+    }
+
+    cout << "YES\n";
     
 }
 
 int main(){
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
-    std::cout.precision(10);
-    cout << std::fixed;
 
     int t;
     cin >> t;

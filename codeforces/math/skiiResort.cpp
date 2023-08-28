@@ -30,14 +30,41 @@ vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
 void solve(){
-    
+    int n, k, q;
+    cin >> n >> k >> q;
+    vi deg(n);
+    rep(i, n) cin >> deg[i];
+
+    ll ans = 0;
+    int l = 0, r = 0;
+    for(; r < n; ) {
+        while(r < n && deg[r] <= q) {
+            r++;
+        }
+
+        ll el = r - l;
+        if(el >= k) {
+            el = el - k + 1;
+            ans += (el) * (el + 1) / 2;
+        }
+        l = r + 1;
+        r++;
+    }
+
+    if(l != r) {
+        ll el = r - l;
+        if(el >= k) {
+            el = el - k + 1;
+            ans += (el) * (el + 1) / 2;
+        } 
+    }
+
+    cout << ans << '\n';
 }
 
 int main(){
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
-    std::cout.precision(10);
-    cout << std::fixed;
 
     int t;
     cin >> t;

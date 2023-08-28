@@ -29,15 +29,32 @@ vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
+int n;
+vi a;
+bool increasing() {
+    for(int i = 1; i < n; i++) {
+        if(a[i] < a[i - 1]) return false;
+    }
+    return true;
+}
+
 void solve(){
-    
+    cin >> n;
+    a.resize(n);
+    rep(i, n) cin >> a[i];
+    int op = 0;
+    for(int i = 1; i < n; i++) {
+        if(a[i] < a[i - 1]) {
+            op = max(op, a[i - 1]);
+        }
+    }
+
+    cout << op << '\n';
 }
 
 int main(){
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
-    std::cout.precision(10);
-    cout << std::fixed;
 
     int t;
     cin >> t;
