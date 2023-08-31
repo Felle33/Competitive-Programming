@@ -31,7 +31,24 @@ vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
 void solve(){
-    
+    int n, m; cin >> n >> m;
+    vi a(n), b(m);
+    rep(i, n) cin >> a[i];
+    rep(i, m) cin >> b[i];
+
+    int less = 0;
+    for(int i = 0, j = 0; i <= n && j < m; j++) {
+        if(i == n) {
+            cout << less << ' ';
+        } else {
+            while(i < n && b[j] > a[i]) {
+                i++;
+                less++;
+            }
+            cout << less << ' ';
+        }
+    }
+    cout << "\n";
 }
 
 int main(){
@@ -40,10 +57,5 @@ int main(){
     std::cout.precision(10);
     cout << std::fixed;
 
-    int t;
-    cin >> t;
-
-    while(t--){
-        solve();
-    }
+    solve();
 }

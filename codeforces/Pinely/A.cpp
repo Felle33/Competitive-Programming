@@ -31,7 +31,33 @@ vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
 void solve(){
-    
+    int n, online, q; cin >> n >> online >> q;
+
+    int onlineTotal = online;
+    bool yes = false;
+    if(online == n) yes = true;
+    rep(i, q) {
+        char c;
+        cin >> c;
+        if(c == '+') {
+            online++;
+            onlineTotal++;
+        } else {
+            online--;
+        }
+
+        if(online == n) yes = true;
+    }
+
+    if(yes) {
+        cout << "YES\n";
+    } else if(onlineTotal >= n) {
+        cout << "MAYBE\n";
+    } else {
+        cout << "NO\n";
+    }
+
+
 }
 
 int main(){

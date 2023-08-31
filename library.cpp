@@ -158,8 +158,9 @@ ll exponentiation(ll b, ll e){
     ll res = 1;
     b %= MOD;
     while(e > 0){
-        if(e & 1)
+        if(e & 1) {
             res = res * b % MOD;
+        }  
         
         b = b * b % MOD;
         e >>= 1;

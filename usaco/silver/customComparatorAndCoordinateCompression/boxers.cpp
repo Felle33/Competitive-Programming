@@ -31,7 +31,43 @@ vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
 void solve(){
-    
+    int n; cin >> n;
+    vll a(n);
+    rep(i, n) cin >> a[i];
+
+    sort(all(a));
+    set<ll> weights;
+    for(int i = 0; i < n; i++) {
+
+        if(a[i] == 1) {
+            if(weights.count(1) == 0) {
+                weights.insert(1);
+                continue;
+            }
+
+            if(weights.count(2) == 0) {
+                weights.insert(2);
+                continue;
+            }
+        } else {
+            if(weights.count(a[i] - 1) == 0) {
+                weights.insert(a[i] - 1);
+                continue;
+            }
+
+            if(weights.count(a[i]) == 0) {
+                weights.insert(a[i]);
+                continue;
+            }
+
+            if(weights.count(a[i] + 1) == 0) {
+                weights.insert(a[i] + 1);
+                continue;
+            }
+        }
+    }
+
+    cout << weights.size() << '\n';
 }
 
 int main(){
@@ -40,10 +76,5 @@ int main(){
     std::cout.precision(10);
     cout << std::fixed;
 
-    int t;
-    cin >> t;
-
-    while(t--){
-        solve();
-    }
+    solve();
 }

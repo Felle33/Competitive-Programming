@@ -31,7 +31,17 @@ vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
 void solve(){
-    
+    int n; cin >> n;
+    vector<int> pos(n + 1, -1);
+    int ans = 0;
+    rep(i, n) {
+        int x; cin >> x;
+        pos[x] = i;
+        if(x == n) continue;
+        if(pos[x + 1] != -1 && pos[x + 1] < pos[x]) ans++;
+    }
+
+    cout << ans << '\n';
 }
 
 int main(){

@@ -15,37 +15,57 @@
 using namespace std;
 typedef long long ll;
 
-struct client {
-	int arrive, departure;
+struct pointTime {
+	int client;
+	int time;
+	bool arrive;
 };
 
-bool cmp(client& c1, client& c2) {
-	return c1.arrive < c2.arrive;
+bool cmp(const pointTime p1, const pointTime p2) {
+	if(p1.time != p2.time) return p1.time < p2.time;
+	return p1.arrive > p2.arrive;
 }
 
 void solve(){
     int n;
 	cin >> n;
-
-	vector<client> clients(n);
+	vector<pointTime> points;
 	for(int i = 0; i < n; i++) {
-		cin >> clients[i].arrive >> clients[i].departure;
+		int a, b;
+		cin >> a >> b;
+		points.push_back({i, a, true});
+		points.push_back({i, b, false});
 	}
 
-	priority_queue<int> minQueue;
-	sort(all(clients), cmp);
-	ll ans = 0;
-	minQueue.push(clients[0].departure);
-	int cnt = 1;
-	for(int i = 1; i < n; i++) {
-		while(i < n && clients[i].arrive <= minQueue.top()) {
-			i++;
-			cnt++;
+	sort(all(points), cmp);
+	vector<int> roomsAssigned(n);
+	n = points.size();
+
+	int numberClients = 0, ans = 0;
+	set<int> s;
+	for(int i = 0; i < n; i++) {
+		pointTime point = points[i];
+		if(point.arrive) {
+			numberClients++;
+			if(s.empty()) {
+				roomsAssigned[point.client] = numberClients;
+			} else {
+				auto it = s.begin();
+				roomsAssigned[point.client] = *it;
+				s.erase(it);
+			}
+			ans = max(ans, numberClients);
+		} else {
+			s.insert(roomsAssigned[point.client]);
+			numberClients--;
 		}
-
-
-
 	}
+
+	cout << ans << '\n';
+	for(int x : roomsAssigned) {
+		cout << x << ' ';
+	}
+	cout << '\n';
 }
 
 int main(){

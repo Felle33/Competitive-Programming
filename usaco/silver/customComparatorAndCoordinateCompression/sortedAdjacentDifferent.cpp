@@ -31,7 +31,30 @@ vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
 void solve(){
-    
+    int n; cin >> n;
+    vll a(n);
+    rep(i, n) cin >> a[i];
+
+    sort(all(a));
+    vll ans;
+    bool pari = true;
+    for(int l = 0, r = n - 1; l <= r; ) {
+        if(pari) {
+            pari = 0;
+            ans.push_back(a[l]);
+            l++;
+        } else {
+            pari = 1;
+            ans.push_back(a[r]);
+            r--;
+        }
+    }
+
+    reverse(all(ans));
+    for(int x : ans) {
+        cout << x << ' ';
+    }
+    cout << '\n';
 }
 
 int main(){
