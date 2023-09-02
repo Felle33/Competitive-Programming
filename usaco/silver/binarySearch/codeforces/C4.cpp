@@ -30,26 +30,48 @@ vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
+int n, k;
+vector<pair<double, double>> pairs;
+
+bool cmp(double d1, double d2) {
+    return d1 > d2;
+}
+
+bool good(double mid) {
+    vector<double> diff(n);
+    rep(i, n) {
+        diff[i] = pairs[i].first - mid * pairs[i].second;
+    }
+
+    sort(all(diff), cmp);
+    double sum = 0;
+    rep(i, k) {
+        sum += diff[i];
+    }
+
+    return sum >= 0;
+}
+
 void solve(){
-    int n, k, t; cin >> n >> t >> k;
+    cin >> n >> k;
+    pairs = vector<pair<double, double>>(n);
+    rep(i, n) {
+        cin >> pairs[i].first >> pairs[i].second;
+    }
 
-    ll l = 0, r = n;
-    ll pref = 0;
-    while(l + 1 < r) {
-        ll mid = l + (r - l) / 2;
-        cout << "? " << l + 1 << " " << mid << endl << flush;
-        ll cnt;
-        cin >> cnt;
+    double l = -1, r = 1e6;
 
-        if((pref + cnt + k) <= mid) {
-            r = mid;
-        } else {
+    rep(i, 60) {
+        double mid = l + (r - l) / 2;
+
+        if(good(mid)) {
             l = mid;
-            pref += cnt;
+        } else {
+            r = mid;
         }
     }
 
-    cout << "! " << r << endl << flush;
+    cout << l << '\n';
 }
 
 int main(){

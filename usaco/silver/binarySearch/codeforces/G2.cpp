@@ -29,27 +29,41 @@ const ll INF = 1e15;
 vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
+ll k, n; 
+vll groups;
+
+bool good(ll cons) {
+    ll mem = k * cons;
+    ll counterMemDisp = 0;
+
+    for(int i = 0; i < n; i++) {
+        ll memDisp = min(cons, groups[i]);
+        counterMemDisp += memDisp;
+    }
+
+    return counterMemDisp >= mem;
+}
 
 void solve(){
-    int n, k, t; cin >> n >> t >> k;
+    cin >> k >> n;
+    groups = vll(n);
+    rep(i, n) cin >> groups[i];
 
-    ll l = 0, r = n;
-    ll pref = 0;
+    ll l = 0, r = 1;
+
+    while(good(r)) r *= 2;
+
     while(l + 1 < r) {
         ll mid = l + (r - l) / 2;
-        cout << "? " << l + 1 << " " << mid << endl << flush;
-        ll cnt;
-        cin >> cnt;
 
-        if((pref + cnt + k) <= mid) {
-            r = mid;
-        } else {
+        if(good(mid)) {
             l = mid;
-            pref += cnt;
+        } else {
+            r = mid;
         }
     }
 
-    cout << "! " << r << endl << flush;
+    cout << l << '\n';
 }
 
 int main(){

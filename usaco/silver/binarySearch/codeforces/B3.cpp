@@ -20,7 +20,6 @@ int n, k;
 bool good(ll maximumSum){
     ll segs = 1;
     ll curSum = 0;
-    int j = 0;
 
     for(int i = 0; i < n; i++){
         if(curSum + nums[i] > maximumSum){
@@ -43,7 +42,7 @@ void solve(){
         cin >> nums[i];
     }
 
-    ll l = *max_element(all(nums)), r = l;
+    ll l = *max_element(all(nums)) - 1, r = l;
 
     while(!good(r)) r *= 2;
 

@@ -30,26 +30,23 @@ vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
+bool cmp(int a, int b) {
+    return a > b;
+}
+
 void solve(){
-    int n, k, t; cin >> n >> t >> k;
+    int n; cin >> n;
+    vi a(n);
+    rep(i, n) cin >> a[i];
+    sort(all(a), cmp);
 
-    ll l = 0, r = n;
-    ll pref = 0;
-    while(l + 1 < r) {
-        ll mid = l + (r - l) / 2;
-        cout << "? " << l + 1 << " " << mid << endl << flush;
-        ll cnt;
-        cin >> cnt;
-
-        if((pref + cnt + k) <= mid) {
-            r = mid;
-        } else {
-            l = mid;
-            pref += cnt;
-        }
+    int ans = 0;
+    for(int i = 0; i < n; i++) {
+        if(a[i] < i) break;
+        ans++;
     }
 
-    cout << "! " << r << endl << flush;
+    cout << ans << '\n';
 }
 
 int main(){
@@ -57,6 +54,9 @@ int main(){
     cin.tie(NULL);
     std::cout.precision(10);
     cout << std::fixed;
+
+    freopen("lemonade.in", "r", stdin);
+	freopen("lemonade.out", "w", stdout);
 
     solve();
 }

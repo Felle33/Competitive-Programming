@@ -30,26 +30,45 @@ vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
-void solve(){
-    int n, k, t; cin >> n >> t >> k;
+ll n, k;
+vector<pair<ll, ll>> intervals;
 
-    ll l = 0, r = n;
-    ll pref = 0;
-    while(l + 1 < r) {
-        ll mid = l + (r - l) / 2;
-        cout << "? " << l + 1 << " " << mid << endl << flush;
-        ll cnt;
-        cin >> cnt;
-
-        if((pref + cnt + k) <= mid) {
-            r = mid;
-        } else {
-            l = mid;
-            pref += cnt;
+ll count(ll mid) {
+    ll sum = 0;
+    for(int i = 0; i < n; i++) {
+        if(mid <= intervals[i].first) continue;
+        if(mid > intervals[i].second) sum += n;
+        else {
+            // sum += (mid - intervals[i] + intervals[i] - 1) / intervals[i]
+            sum += (mid - 1) / intervals[i].first;
         }
     }
 
-    cout << "! " << r << endl << flush;
+    return sum;
+}
+
+void solve(){
+    cin >> n;
+    intervals = vector<pair<ll, ll>>(n);
+
+    for(ll i = 1; i <= n; i++) {
+        intervals[i - 1].first = i;
+        intervals[i - 1].second = i * n;
+    }
+
+    k = (n * n) / 2;
+    ll l = 1, r = n * n + 1;
+    while(l + 1 < r) {
+        ll mid = l + (r - l) / 2;
+
+        if(count(mid) <= k) {
+            l = mid;
+        } else {
+            r = mid;
+        }
+    }
+
+    cout << l << '\n';
 }
 
 int main(){

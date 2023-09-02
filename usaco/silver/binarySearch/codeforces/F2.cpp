@@ -30,26 +30,60 @@ vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
-void solve(){
-    int n, k, t; cin >> n >> t >> k;
+string firstWord, secondWord;
+vi deletions;
+int n;
+int m;
 
-    ll l = 0, r = n;
-    ll pref = 0;
-    while(l + 1 < r) {
-        ll mid = l + (r - l) / 2;
-        cout << "? " << l + 1 << " " << mid << endl << flush;
-        ll cnt;
-        cin >> cnt;
+bool good(ll mid) {
+    vi lettersAv;
 
-        if((pref + cnt + k) <= mid) {
-            r = mid;
+    for(int i = mid + 1; i < n; i++) {
+        lettersAv.push_back(deletions[i]);
+    }
+
+    sort(all(lettersAv));
+    string firstWordMod;
+
+    for(int x : lettersAv) {
+        firstWordMod += firstWord[x - 1];
+    }
+
+    // i = pointer of the firstWordMod
+    // j = pointer of the second word
+    int k = firstWordMod.size();
+    int i = 0, j = 0;
+    for(; i < k && j < m;) {
+        if(firstWordMod[i] == secondWord[j]) {
+            i++, j++;
         } else {
-            l = mid;
-            pref += cnt;
+            i++;
         }
     }
 
-    cout << "! " << r << endl << flush;
+    return j == m;
+}
+
+void solve(){
+    cin >> firstWord >> secondWord;
+    n = firstWord.size();
+    m = secondWord.size();
+    deletions = vi(n);
+    rep(i, n) cin >> deletions[i];
+
+    ll l = -1, r = n - 1;
+
+    while(l + 1 < r) {
+        ll mid = l + (r - l) / 2;
+
+        if(good(mid)) {
+            l = mid;
+        } else {
+            r = mid;
+        }
+    }
+
+    cout << r << '\n';
 }
 
 int main(){

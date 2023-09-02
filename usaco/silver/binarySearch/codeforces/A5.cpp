@@ -30,26 +30,45 @@ vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
-void solve(){
-    int n, k, t; cin >> n >> t >> k;
+int n, k;
+vector<pair<ll, ll>> intervals;
 
-    ll l = 0, r = n;
-    ll pref = 0;
+ll count(ll mid) {
+    ll sum = 0;
+    for(int i = 0; i < n; i++) {
+        if(intervals[i].first >= mid) continue;
+        sum += min(mid - intervals[i].first, intervals[i].second - intervals[i].first + 1);
+    }
+
+    return sum;
+}
+
+void solve(){
+    cin >> n >> k;
+    intervals = vector<pair<ll, ll>>(n);
+
+    ll mi = INF, ma = -INF;
+    rep(i, n) {
+        ll a, b;
+        cin >> a >> b;
+        intervals[i].first = a;
+        intervals[i].second = b;
+        mi = min(mi, a);
+        ma = max(ma, b);
+    }
+
+    ll l = mi, r = ma + 1;
     while(l + 1 < r) {
         ll mid = l + (r - l) / 2;
-        cout << "? " << l + 1 << " " << mid << endl << flush;
-        ll cnt;
-        cin >> cnt;
 
-        if((pref + cnt + k) <= mid) {
-            r = mid;
-        } else {
+        if(count(mid) <= k) {
             l = mid;
-            pref += cnt;
+        } else {
+            r = mid;
         }
     }
 
-    cout << "! " << r << endl << flush;
+    cout << l << '\n';
 }
 
 int main(){

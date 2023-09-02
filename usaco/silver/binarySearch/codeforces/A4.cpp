@@ -26,20 +26,19 @@ bool good(double mean){
     }
     
     pref[0] = 0;
-    for(int i = 1; i < n; i++){
+    for(int i = 1; i <= n; i++){
         pref[i] = pref[i - 1] + copy[i - 1];
     }
 
-    double minMean = 0;
-    int index = 0;
-    for(int i = d; i < n; i++){
-        if(minMean > pref[i - d]){
-            minMean = pref[i - d];
-            index = i - d;
+    double mi = 0, index = 0;
+    for(int r = d; r <= n; r++) {
+        if(mi > pref[r - d]) {
+            index = r - d;
+            mi = pref[r - d];
         }
 
-        if(pref[i] - minMean >= 0){
-            ansL = index + 1, ansR = i;
+        if(pref[r] - mi >= 0) {
+            ansL = index + 1, ansR = r;
             return true;
         }
     }
@@ -48,7 +47,6 @@ bool good(double mean){
 }
 
 void solve(){
-
     cin >> n >> d;
     nums.resize(n);
     
@@ -56,16 +54,13 @@ void solve(){
         cin >> nums[i];
     }
 
-    double l = 0, r = 1;
-
-    while(good(r)) r *= 2;
+    double l = -1, r = 200;
 
     for(int i = 0; i < 100; i++){
         double mid = l + (r - l) / 2;
         if(good(mid)){
             l = mid;
-        }
-        else{
+        } else {
             r = mid;
         }
     }
@@ -74,7 +69,10 @@ void solve(){
 }
 
 int main(){
-    /* freopen("lifeguards.in", "r", stdin);
-	freopen("lifeguards.out", "w", stdout); */
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    std::cout.precision(10);
+    cout << std::fixed;
+
     solve();
 } 
