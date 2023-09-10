@@ -8,6 +8,7 @@
 #include <map>
 #include <set>
 #include <iomanip>
+#include <numeric>
 
 #define all(x) (x).begin(), (x).end()
 #define mp make_pair
@@ -32,16 +33,51 @@ string DIR = "RDUL";
 
 void solve(){
     int n; cin >> n;
-    vector<int> a(n);
+    vi a(n);
     rep(i, n) cin >> a[i];
 
-    int m = max_element(all(a));
-    return *it;
+    vi pref(n + 1);
+    pref[0] = 0;
+    for(int i = 1; i <= n; i++) {
+        pref[i] = pref[i - 1] ^ a[i - 1];
+    }
+
+    string str; cin >> str;
+    int xor0 = 0, xor1 = 0;
+    for(int i = 0; i < n; i++) {
+        if(str[i] == '1') xor1 ^= a[i];
+        else xor0 ^= a[i];
+    }
+
+    int q; cin >> q;
+    rep(i, q) {
+        int op; cin >> op;
+        if(op == 1) {
+            int l, r;
+            cin >> l >> r;
+            l--;
+
+            int xorDiff = pref[r] ^ pref[l];
+            xor0 ^= xorDiff;
+            xor1 ^= xorDiff;
+        } else {
+            int num; cin >> num;
+
+            if(num == 0) cout << xor0 << ' ';
+            else cout << xor1 << ' ';
+        }
+    }
+
+    cout << '\n';
 }
 
 int main(){
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
 
-    solve();
+    int t; cin >> t;
+    while(t--) {
+        solve();
+    }
+    
 }

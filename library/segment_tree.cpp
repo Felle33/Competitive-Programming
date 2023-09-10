@@ -15,15 +15,16 @@ struct SegmentTree {
         tree.resize(2 * size, 0LL);
     }
 
-    void build(vll& numbers, int n){
+    void build(vector<ll>& numbers){
         build(numbers, 0, 0, size);
     }
 
-    void build(vll& numbers, int x, int lx, int rx) {
+    void build(vector<ll>& numbers, int x, int lx, int rx) {
         if(rx - lx == 1) {
             if(lx < (int) numbers.size()) {
-                tree[lx] = numbers[lx];
+                tree[x] = numbers[lx];
             }
+            return;
         }
 
         int mid = (lx + rx) / 2;
