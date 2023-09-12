@@ -8,42 +8,52 @@
 #include <map>
 #include <set>
 #include <iomanip>
+#include <bitset>
 
 #define all(x) (x).begin(), (x).end()
-#define f first
-#define s second
+#define mp make_pair
+#define pb push_back
 #define rep(X,Y) for (int (X) = 0;(X) < (Y);++(X))
 #define reps(X,S,Y) for (int (X) = S;(X) < (Y);++(X))
 
 using namespace std;
+typedef vector<int> vi;
+typedef vector<long long> vll;
+typedef vector<unsigned long long> vull;
+typedef vector<vector<int>> vvi;
 typedef long long ll;
 typedef pair<int,int> pii;
 
 const ll MOD = 1e9 + 7;
 const ll DIM = 1e6;
-const ll INF = 1e9;
+const ll INF = 1e15;
+const ll LOG = 18;
 vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
-vector<vector<int>> adj;
-vector<ll> pathXor;
-vector<ll> vals;
-vector<ll> subtreeSize;
-int nNodeVisited = 0;
-vector<int> trans;
-vector<int> depths;
-vector<int> first;
-vector<int> nodes;
+vvi adj;
+vi euler_tour;
+vll ent;
+vll pathXor;
+vi start;
+vi finish;
+int timer;
+// LCA
+vi depth;
+//up
+vvi up;
 
 struct SegmentTree {
     int size;
     vector<ll> tree;
 
+    ll NEUTRAL_ELEMENT = 0LL;
+
     SegmentTree(int n) {
         size = 1;
         while(size < n) size *= 2;
-        tree.resize(2 * size, 0LL);
+        tree.resize(2 * size, NEUTRAL_ELEMENT);
     }
 
     void build(vector<ll>& numbers){
@@ -63,37 +73,33 @@ struct SegmentTree {
         build(numbers, 2 * x + 2, mid, rx);
     }
 
-    void set(int l_query, int r_query, int v, int x, int lx, int rx) {
-        if(l_query >= rx || r_query <= lx) return;
-        if(l_query <= lx && rx <= r_query){
-            tree[x] ^= v;
+    void set_range(int l_range, int r_range, int x, int lx, int rx, ll new_value, ll old_value) {
+        if(l_range >= rx || r_range <= lx) return;
+        if(l_range <= lx && rx <= r_range) {
+            tree[x] = tree[x] ^ old_value ^ new_value;
             return;
-        } 
-
-        int mid = (lx + rx) / 2;
-        set(l_query, r_query, v, 2 * x + 1, lx, mid);
-        set(l_query, r_query, v, 2 * x + 2, mid, rx);
-    }
-
-    void set(int l, int r, int v) {
-        set(l, r, v, 0, 0, size);
-    }
-
-    // l_query = da dove inizia la query
-    // r_query = dove finisce la query non compresa
-    // x = nodo
-    // lx = dove inizia la zona di competenza del nodo
-    // rx = dove finisce la zona di competenza del nodo non compreso
-    ll retrieve(int i, int x, int lx, int rx) {
-        if(rx - lx == 1) return tree[x];
-        int mid = (lx + rx) / 2;
-        ll s1;
-        if(i < mid) {
-            s1 = retrieve(i, 2 * x + 1, lx, mid);
-        } else {
-            s1 = retrieve(i, 2 * x + 2, mid, rx);
         }
-        return s1 ^ tree[x];
+
+        int mid = (lx + rx) / 2;
+        set_range(l_range, r_range, 2 * x + 1, lx, mid, new_value, old_value);
+        set_range(l_range, r_range, 2 * x + 2, mid, rx, new_value, old_value);
+    }
+
+    void set_range(int l_range, int r_range, ll new_value, ll old_value) {
+        set_range(l_range, r_range, 0, 0, size, new_value, old_value);
+    }
+
+    ll retrieve(int i, int x, int lx, int rx) {
+        if(rx - lx == 1) {
+            return tree[x];
+        }
+
+        int m = (lx + rx) / 2;
+        if(i < m) {
+           return tree[x] ^ retrieve(i, 2 * x + 1, lx, m);
+        } 
+        
+        return tree[x] ^ retrieve(i, 2 * x + 2, m, rx);
     }
 
     ll retrieve(int i) {
@@ -101,137 +107,94 @@ struct SegmentTree {
     }
 };
 
-struct SegmentTreeLCA {
-    int size;
-    // pair in which first is the min depth and second is the index
-    vector<pair<int, int>> tree;
+void dfs(int node, int parent, ll xorCur) {
+    euler_tour.pb(node);
+    start[node] = timer++;
+    xorCur ^= ent[node];
+    pathXor[node] = xorCur;
 
-    SegmentTreeLCA(int n) {
-        size = 1;
-        while(size < n) size *= 2;
-        tree.resize(2 * size, make_pair(INF, -1));
-    }
+    for(int child : adj[node]) {
+        if(child != parent) {
+            depth[child] = depth[node] + 1;
 
-    void build(vector<int>& depths, vector<int>& nodes){
-        build(depths, nodes, 0, 0, size);
-    }
-
-    void build(vector<int>& depths, vector<int>& nodes, int x, int lx, int rx) {
-        if(rx - lx == 1) {
-            if(lx < (int) depths.size()) {
-                tree[x] = {depths[lx], nodes[lx]};
+            up[child][0] = node;
+            for(int i = 1; i < LOG; i++) {
+                up[child][i] = up[up[child][i - 1]][i - 1];
             }
-            return;
-        }
 
-        int mid = (lx + rx) / 2;
-        build(depths, nodes, 2 * x + 1, lx, mid);
-        build(depths, nodes, 2 * x + 2, mid, rx);
-        if(tree[2 * x + 1].first <= tree[2 * x + 2].first) {
-            tree[x] = tree[2 * x + 1];
-        } else {
-            tree[x] = tree[2 * x + 2];
+            dfs(child, node, xorCur);
         }
     }
 
-    // l_query = da dove inizia la query
-    // r_query = dove finisce la query non compresa
-    // x = nodo
-    // lx = dove inizia la zona di competenza del nodo
-    // rx = dove finisce la zona di competenza del nodo non compreso
-    pair<int, int> LCA(int l_query, int r_query, int x, int lx, int rx) {
-        if(r_query <= lx || l_query >= rx) return {INF, -1};
-        if(l_query <= lx && rx <= r_query) return tree[x];
+    finish[node] = timer;
+}
 
-        int mid = (lx + rx) / 2;
-        pii s1 = LCA(l_query, r_query, 2 * x + 1, lx, mid);
-        pii s2 = LCA(l_query, r_query, 2 * x + 2, mid, rx);
+// get the node corresponding to lca of a and b
+int get_lca(int a, int b) {
+    if(depth[a] < depth[b]) swap(a, b);
 
-        if(s1.first <= s2.first) {
-            return s1;
-        } else {
-            return s2;
+    ll k = depth[a] - depth[b];
+    for(int i = LOG - 1; i >= 0; i--) {
+        if(k & (1 << i)) a = up[a][i];
+    }
+
+    if(a == b) return a;
+
+    for(int i = LOG - 1; i >= 0; i--) {
+        if(up[a][i] != up[b][i]) {
+            a = up[a][i];
+            b = up[b][i];
         }
     }
 
-    pair<int, int> LCA(int a, int b) {
-        int l = min(first[a], first[b]);
-        int r = max(first[a], first[b]);
-        return LCA(l, r + 1, 0, 0, size);
-    }
-};
-
-int dfs(int node, int parent, ll sum, int depth) {
-    nodes.push_back(node);
-    depths.push_back(depth);
-    first[node] = nodes.size() - 1;
-    trans[node] = nNodeVisited;
-    nNodeVisited++;
-    ll size = 1;
-    ll newSum = sum ^ vals[node];
-    pathXor.push_back(newSum);
-
-    for(int son : adj[node]) {
-        if(son != parent) {
-            size += dfs(son, node, newSum, depth + 1);
-            nodes.push_back(node);
-            depths.push_back(depth);
-        }
-    }
-
-    subtreeSize[node] = size;
-    return size;
+    return up[a][0];
 }
 
 void solve(){
-    int n, q;
-    cin >> n >> q;
+    ll n, q; cin >> n >> q;
+    adj = vvi(n);
+    ent = vll(n);
+    pathXor = vll(n);
+    start = vi(n), finish = vi(n);
+    depth = vi(n);
+    up = vvi(n, vi(LOG));
 
-    adj.resize(n);
-    vals.resize(n);
-    subtreeSize.resize(n);
-    first.resize(n);
-    trans.resize(n);
-    rep(i, n) {
-        cin >> vals[i];
-    }
-
+    rep(i, n) cin >> ent[i];
     rep(i, n - 1) {
-        int a, b;
-        cin >> a >> b;
+        int a, b; cin >> a >> b;
         a--, b--;
-        adj[b].push_back(a);
-        adj[a].push_back(b);
+        adj[a].pb(b);
+        adj[b].pb(a);
     }
 
-    dfs(0, -1, 0, 0);
-    SegmentTreeLCA sgtLCA(n);
-    sgtLCA.build(depths, nodes);
+    dfs(0, -1, 0);
 
-    SegmentTree sgtXor(n);
-    sgtXor.build(pathXor);
+    vll pathXorEuler;
+    for(int i = 0; i < n; i++) {
+        pathXorEuler.pb(pathXor[euler_tour[i]]);
+    }
+
+    SegmentTree sgt(n);
+    sgt.build(pathXorEuler);
+
     rep(i, q) {
-        int op;
-        cin >> op;
-
+        int op; cin >> op;
         if(op == 1) {
-            int u, x;
-            cin >> u >> x;
-            u--;
-            int nodeInPath = trans[u];
-            sgtXor.set(nodeInPath, nodeInPath + subtreeSize[u], x ^ vals[u]);
-            vals[u] = x;
+            ll node, newe; cin >> node >> newe;
+            node--;
+
+            ll s = start[node];
+            ll e = finish[node];
+            sgt.set_range(s, s + (e - s), newe, ent[node]);
+            ent[node] = newe;
         } else {
-            int a, b;
-            cin >> a >> b;
+            ll a, b; cin >> a >> b;
             a--, b--;
-            // calculate the enjoy
-            int lca = sgtLCA.LCA(a, b).second;
-            int resA = sgtXor.retrieve(a);
-            int resB = sgtXor.retrieve(b);
-            int resLCA = vals[lca];
-            int res = resA ^ resB ^ resLCA;
-            cout << res << '\n';
+
+            ll lca = get_lca(a, b);
+            ll ea = sgt.retrieve(start[a]), eb = sgt.retrieve(start[b]), elca = ent[lca];
+            ll ans = ea ^ eb ^ elca;
+            cout << ans << '\n';
         }
     }
 }
