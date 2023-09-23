@@ -37,14 +37,14 @@ struct SegmentTree {
     vector<ll> tree;
     vector<ll> op;
 
-    ll NEUTRAL_ELEMENT = 0;
-    ll NEUTRAL_ELEMENT_OP = 0;
+    ll NEUTRAL_ELEMENT = LONG_LONG_MAX - 1;
+    ll NOP = LONG_LONG_MAX;
 
     SegmentTree(int n) {
         size = 1;
         while(size < n) size *= 2;
         tree.resize(2 * size, NEUTRAL_ELEMENT);
-        op.resize(2 * size, NEUTRAL_ELEMENT_OP);
+        op.resize(2 * size, NOP);
     }
 
     void build(vector<ll>& numbers){
@@ -62,41 +62,52 @@ struct SegmentTree {
         int mid = (lx + rx) / 2;
         build(numbers, 2 * x + 1, lx, mid);
         build(numbers, 2 * x + 2, mid, rx);
-        tree[x] = tree[2 * x + 1] + tree[2 * x + 2];
+        tree[x] = min(tree[2 * x + 1], tree[2 * x + 2]);
     }
 
-    void add(int l_query, int r_query, ll value, int x, int lx, int rx) {
+    void propagate(int x, int lx, int rx) {
+        if(rx - lx == 1 || op[x] == NOP) return;
+        tree[2 * x + 1] = op[x];
+        tree[2 * x + 2] = op[x];
+        op[2 * x + 1] = op[x];
+        op[2 * x + 2] = op[x];
+        op[x] = NOP;
+    }
+
+    void ass(int l_query, int r_query, ll value, int x, int lx, int rx) {
+        propagate(x, lx, rx);
         if(l_query >= rx || r_query <= lx) return;
         if(l_query <= lx && rx <= r_query) {
-            tree[x] += value * (rx - lx);
-            op[x] += value;
+            tree[x] = value;
+            op[x] = value;
             return;
         }
 
         int mid = (lx + rx) / 2;
-        add(l_query, r_query, value, 2 * x + 1, lx, mid);
-        add(l_query, r_query, value, 2 * x + 2, mid, rx);
-        tree[x] = tree[2 * x + 1] + tree[2 * x + 2] + op[x] * (rx - lx);
+        ass(l_query, r_query, value, 2 * x + 1, lx, mid);
+        ass(l_query, r_query, value, 2 * x + 2, mid, rx);
+        tree[x] = min(tree[2 * x + 1], tree[2 * x + 2]);
     }
 
-    void add(int l, int r, ll v) {
-        add(l, r, v, 0, 0, size);
+    void ass(int l, int r, ll v) {
+        ass(l, r, v, 0, 0, size);
     }
 
-    pair<ll, ll> sum(int l_query, int r_query, int x, int lx, int rx) {
-        if(l_query >= rx || r_query <= lx) return mp(0, 0);
+    ll mini(int l_query, int r_query, int x, int lx, int rx) {
+        propagate(x, lx, rx);
+        if(l_query >= rx || r_query <= lx) return NEUTRAL_ELEMENT;
         if(l_query <= lx && rx <= r_query) {
-            return mp(tree[x], rx - lx);
+            return tree[x];
         }
 
         int mid = (lx + rx) / 2;
-        pair<ll, ll> s1 = sum(l_query, r_query, 2 * x + 1, lx, mid);
-        pair<ll, ll> s2 = sum(l_query, r_query, 2 * x + 2, mid, rx);
-        return mp((s1.first + s2.first) + op[x] * (s1.second + s2.second), s1.second + s2.second);
+        ll s1 = mini(l_query, r_query, 2 * x + 1, lx, mid);
+        ll s2 = mini(l_query, r_query, 2 * x + 2, mid, rx);
+        return min(s1, s2);
     }
 
-    ll sum(int l, int r) {
-        return sum(l, r, 0, 0, size).first;
+    ll mini(int l, int r) {
+        return mini(l, r, 0, 0, size);
     }
 };
  
@@ -116,13 +127,13 @@ int main(){
         int op;
         cin >> op;
         if(op == 1) {
-            int l, r, v;
+            ll l, r, v;
             cin >> l >> r >> v;
-            segmentTree.add(l, r, v);
+            segmentTree.ass(l, r, v);
         } else {
             int l, r;
             cin >> l >> r;
-            cout << segmentTree.sum(l, r) << '\n';
+            cout << segmentTree.mini(l, r) << '\n';
         }
     }
 }
