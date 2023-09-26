@@ -60,7 +60,7 @@ bool topSort(vector<vector<int>>& adj, vector<int> arcIn) {
         }
     }
 
-    return cnt == 26;
+    return cnt != 26;
 }
 
 void solve(){
@@ -80,26 +80,22 @@ void solve(){
         int l = 0;
         bool added = false;
         for(; l < m && !added; l++) {
-            if(s1[l] < s2[l]) {
+            if(s1[l] != s2[l]) {
                 adj[s1[l] - 'a'].push_back(s2[l] - 'a');
                 added = 1;
                 arcIn[s2[l] - 'a']++;
-            } else if(s1[l] > s2[l]) {
-                adj[s2[l] - 'a'].push_back(s1[l] - 'a');
-                added = 1;
-                arcIn[s1[l] - 'a']++;
             }
+        }
 
-            if(!added) {
-                if(s1.size() > s2.size()) {
-                    rightOrder = 0;
-                }
+        if(!added) {
+            if(s1.size() > s2.size()) {
+                rightOrder = 0;
             }
         }
     }
 
 
-    if(!rightOrder || !topSort(adj, arcIn)) {
+    if(!rightOrder || topSort(adj, arcIn)) {
         cout << "Impossible\n";
         return;
     }
