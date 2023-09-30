@@ -15,8 +15,27 @@
 typedef long long ll;
 using namespace std;
 
+// for every letters how many times it appears in the sliding window
+map<char, int> mp;
+// how different pokemons there are in the sl win
+int currCounter = 0;
+
+void insert(char c) {
+    if(mp[c] == 0) {
+        currCounter++;
+    }
+    mp[c]++;
+}
+
+void erase(char c) {
+    if(mp[c] == 1) {
+        currCounter--;
+    }
+    mp[c]--;
+}
+
 void solve(){
-    int n, m;
+    int n;
     cin >> n;
     string pokemon;
     cin >> pokemon;
@@ -27,9 +46,27 @@ void solve(){
     }
 
     int totalTypes = types.size();
-    for(int l = 0, r = 0; r < n; r++){
+    int ans = 1e9;
+    
+    for(int l = 0, r = 0; r < n; ){
+        while(r < n && currCounter < totalTypes) {
+            insert(pokemon[r]);
+            r++;
+        }
+
+        while(mp[pokemon[l]] > 1) {
+            erase(pokemon[l]);
+            l++;
+        }
+
+        if(currCounter == totalTypes) {
+            ans = min(ans, r - l);
+        }
         
+        erase(pokemon[l++]);
     }
+
+    cout << ans << '\n';
 }
 
 int main(){

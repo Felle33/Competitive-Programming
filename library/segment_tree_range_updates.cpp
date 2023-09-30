@@ -7,14 +7,16 @@ using namespace std;
 
 struct SegmentTree {
     int size;
-    vector<ll> tree;
+    vector<ll> tree, op;
 
     ll NEUTRAL_ELEMENT = 0;
+    ll NOP = LLONG_MAX;
 
     SegmentTree(int n) {
         size = 1;
         while(size < n) size *= 2;
         tree.resize(2 * size, NEUTRAL_ELEMENT);
+        op.resize(2 * size, NOP);
     }
 
     void build(vector<ll>& numbers){
@@ -35,31 +37,37 @@ struct SegmentTree {
         tree[x] = tree[2 * x + 1] + tree[2 * x + 2];
     }
 
-    void set(int i, int v, int x, int lx, int rx) {
-        if(rx - lx == 1) {
-            tree[x] = v;
+    void propagate(int x, int lx, int rx) {
+        if(op[x] == NOP || rx - lx == 1) return;
+        int mid = (rx + lx) / 2;
+        tree[2 * x + 1] += op[x] * (mid - lx);
+        tree[2 * x + 2] += op[x] * (rx - mid);
+        op[2 * x + 1] = (op[2 * x + 1] == NOP ? op[x] : op[2 * x + 1] + op[x]);
+        op[2 * x + 2] = (op[2 * x + 2] == NOP ? op[x] : op[2 * x + 2] + op[x]);
+        op[x] = NOP;
+    }
+
+    void add(int l_query, int r_query, ll v, int x, int lx, int rx) {
+        propagate(x, lx, rx);
+        if(l_query >= rx || r_query <= lx) return;
+        if(l_query <= lx && rx <= r_query){
+            tree[x] += (rx - lx) * v;
+            op[x] = (op[x] == NOP ? v : op[x] + v);
             return;
         }
 
         int m = (lx + rx) / 2;
-        if(i < m) {
-            set(i, v, 2 * x + 1, lx, m);
-        } else {
-            set(i, v, 2 * x + 2, m, rx);
-        }
+        add(l_query, r_query, v, 2 * x + 1, lx, m);
+        add(l_query, r_query, v, 2 * x + 2, m, rx);
         tree[x] = tree[2 * x + 1] + tree[2 * x + 2];
     }
 
-    void set(int i, int v) {
-        set(i, v, 0, 0, size);
+    void add(int l_query, int r_query, ll v) {
+        add(l_query, r_query, v, 0, 0, size);
     }
 
-    // l_query = da dove inizia la query
-    // r_query = dove finisce la query non compresa
-    // x = nodo
-    // lx = dove inizia la zona di competenza del nodo
-    // rx = dove finisce la zona di competenza del nodo non compreso
     ll sum(int l_query, int r_query, int x, int lx, int rx) {
+        propagate(x, lx, rx);
         if(l_query >= rx || r_query <= lx) return NEUTRAL_ELEMENT;
         if(l_query <= lx && rx <= r_query) return tree[x];
         int mid = (lx + rx) / 2;
@@ -74,27 +82,5 @@ struct SegmentTree {
 };
  
 int main(){
-    int n, m;
-    cin >> n >> m;
 
-    SegmentTree segmentTree(n);
-    for(int i = 0; i < n; i++) {
-        int a;
-        cin >> a;
-        segmentTree.set(i, a);
-    }
-
-    while(m--) {
-        int op;
-        cin >> op;
-        if(op == 1) {
-            int i, v;
-            cin >> i >> v;
-            segmentTree.set(i, v);
-        } else {
-            int l, r;
-            cin >> l >> r;
-            cout << segmentTree.sum(l, r) << '\n';
-        }
-    }
 }
