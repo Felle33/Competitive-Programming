@@ -8,7 +8,7 @@
 #include <map>
 #include <set>
 #include <iomanip>
-#include <numeric>
+#include <bitset>
 
 #define all(x) (x).begin(), (x).end()
 #define mp make_pair
@@ -31,43 +31,39 @@ vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
-const int maxn = 100;
-vvi adj;
-vi col;
-
-int cnt[maxn];
-void add(int v, int p, int x){
-    cnt[col[v]] += x;
-    for(auto u: adj[v])
-        if(u != p)
-            add(u, v, x);
-}
-
-void dfs(int v, int p){
-    add(v, p, 1);
-    //now cnt[c] is the number of vertices in subtree of vertex v that has color c. You can answer the queries easily.
-    add(v, p, -1);
-    for(auto u : adj[v])
-        if(u != p)
-            dfs(u, v);
-}
+vll skill;
+vll dp;
+int n, k;
 
 void solve(){
-    int n; cin >> n;
-    adj = vvi(n);
-    col = vi(n);
-    rep(i, n) cin >> col[i];
-    rep(i, n - 1) {
-        int a, b;
-        cin >> a >> b;
-        adj[a].push_back(b);
-        adj[b].push_back(a);
+    cin >> n >> k;
+    skill.resize(n);
+    dp.resize(n);
+    rep(i, n) cin >> skill[i];
+    
+    dp[0] = skill[0];
+    for(int i = 1; i < n; i++) {
+        ll curMax = skill[i];
+        for(int len = 0; len < k; len++) {
+            int j = i - len;
+            if(j < 0) break;
+
+            curMax = max(curMax, skill[j]);
+            dp[i] = max(dp[i], (j - 1 < 0 ? 0 : dp[j - 1]) + curMax * (len + 1));
+        }
     }
+
+    cout << dp[n - 1];
 }
 
 int main(){
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
+    std::cout.precision(10);
+    cout << std::fixed;
+
+    freopen("teamwork.in", "r", stdin);
+	freopen("teamwork.out", "w", stdout);
 
     solve();
 }
