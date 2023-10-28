@@ -33,7 +33,14 @@ vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
 void solve(){
-    
+    int n; cin >> n;
+    vll a(n);
+    rep(i, n) cin >> a[i];
+    sort(all(a));
+
+    ll ans = a[n - 1] * a[n - 2];
+    ans = max(ans, a[0] * a[1]);
+    cout << ans << '\n';
 }
 
 int main(){

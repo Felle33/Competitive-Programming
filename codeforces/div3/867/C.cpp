@@ -33,7 +33,9 @@ vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
 void solve(){
-    
+    ll n; cin >> n;
+    ll ans = 26 + 2 * n * (n + 1) / 2 - 2 * 4 * 5 / 2 + n - 4;
+    cout << ans << '\n';
 }
 
 int main(){

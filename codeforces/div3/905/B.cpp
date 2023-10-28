@@ -33,7 +33,41 @@ vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
 void solve(){
-    
+    int n, k; cin >> n >> k;
+    string s; cin >> s;
+    vector<int> cnt(26);
+
+    for(int i = 0; i < n; i++) {
+        cnt[s[i] - 'a']++;
+    }
+
+    int rend_pari = 0;
+    bool all_pari = true, one_dis = false, more_dis = false;
+    for(int i = 0; i < 26; i++) {
+        if(cnt[i] % 2 == 1) {
+            rend_pari++;
+            all_pari = 0;
+            if(one_dis || more_dis) {
+                more_dis = 1;
+                one_dis = 0;
+            } else {
+                one_dis = 1;
+            }
+        }
+    }
+
+    if(all_pari || one_dis) {
+        cout << "YES\n";
+    } else {
+        rend_pari--;
+        if(k < rend_pari) {
+            cout << "NO\n";
+        } else {
+            cout << "YES\n";
+        }
+    }
+
+
 }
 
 int main(){

@@ -33,7 +33,21 @@ vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
 void solve(){
-    
+    int n, t; cin >> n >> t;
+    vi a(n), e(n);
+    rep(i, n) cin >> a[i];
+    rep(i, n) cin >> e[i];
+
+    int ans = -1, ent = 0;
+    for(int i = 0; i < n; i++) {
+        if(i + a[i] <= t && e[i] > ent) {
+            ans = i + 1;
+            ent = e[i];
+        }
+    }
+
+    cout << ans << '\n';
+
 }
 
 int main(){

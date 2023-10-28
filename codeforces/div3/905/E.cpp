@@ -8,7 +8,7 @@
 #include <map>
 #include <set>
 #include <iomanip>
-#include <numeric>
+#include <bitset>
 
 #define all(x) (x).begin(), (x).end()
 #define mp make_pair
@@ -27,47 +27,48 @@ typedef pair<int,int> pii;
 const ll MOD = 1e9 + 7;
 const ll DIM = 1e6;
 const ll INF = 1e15;
+const ll LL_MAX = 9223372036854775807;
 vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
-const int maxn = 100;
-vvi adj;
-vi col;
-
-int cnt[maxn];
-void add(int v, int p, int x){
-    cnt[col[v]] += x;
-    for(auto u: adj[v])
-        if(u != p)
-            add(u, v, x);
-}
-
-void dfs(int v, int p){
-    add(v, p, 1);
-    //now cnt[c] is the number of vertices in subtree of vertex v that has color c. You can answer the queries easily.
-    add(v, p, -1);
-    for(auto u : adj[v])
-        if(u != p)
-            dfs(u, v);
-}
-
 void solve(){
     int n; cin >> n;
-    adj = vvi(n);
-    col = vi(n);
-    rep(i, n) cin >> col[i];
-    rep(i, n - 1) {
-        int a, b;
-        cin >> a >> b;
-        adj[a].push_back(b);
-        adj[b].push_back(a);
+    vll a(n);
+    rep(i, n) cin >> a[i];
+
+    if(n == 1) {
+        cout << 0 << '\n';
+        return;
     }
+
+    int ans = 0;
+    for(int i = 1; i < n; i++) {
+        ll prev = a[i - 1];
+        ll cur = a[i];
+
+        if(cur < prev) {
+            while(cur < prev) {
+                ans++;
+                cur *= 2;
+            }
+            a[i] = cur;
+        }
+    }
+
+    cout << ans << '\n';
 }
 
 int main(){
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
+    std::cout.precision(10);
+    cout << std::fixed;
 
-    solve();
+    int t;
+    cin >> t;
+
+    while(t--){
+        solve();
+    }
 }

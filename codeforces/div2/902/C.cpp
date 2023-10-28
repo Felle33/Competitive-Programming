@@ -27,21 +27,45 @@ typedef pair<int,int> pii;
 const ll MOD = 1e9 + 7;
 const ll DIM = 1e6;
 const ll INF = 1e15;
+const ll LL_MAX = 9223372036854775807;
 vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
-void solve(){
-    ll a, b, n; cin >> a >> b >> n;
-    vll sec(n);
-    rep(i, n) cin >> sec[i];
+ll mult(int n, int m) {
+    ll mul = 0;
+    mul = m / n;
+    return mul;
+}
 
-    ll ans = b;
-    rep(i, n) {
-        ans += min(a - 1, sec[i]);
+void solve(){
+    ll n, m, k;
+    cin >> n >> m >> k;
+
+    if(k > 3) {
+        cout << 0 << '\n';
+        return;
     }
 
-    cout << ans << '\n';
+    if(k == 1) {
+        cout << 1 << '\n';
+        return;
+    }
+    
+    if(k == 2) {
+        ll tot = 0;
+        if(m < n) {
+            tot += m;
+        } else {
+            tot += n - 1;
+            tot += mult(n, m);
+        }
+
+        cout << tot << '\n';
+        return;
+    }
+
+    cout << max(m - n - mult(n, m) + 1, 0LL) << '\n';
 }
 
 int main(){

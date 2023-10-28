@@ -32,8 +32,37 @@ vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
+bool cmp(pair<ll, ll> p1, pair<ll, ll> p2) {
+    if(p1.first != p2.first) return p1.first < p2.first;
+    return p1.second > p2.second;
+}
+
 void solve(){
-    
+    int n, p; cin >> n >> p;
+    vector<pair<ll, ll>> cop(n);
+
+    rep(i, n) cin >> cop[i].second;
+    rep(i, n) cin >> cop[i].first;
+
+    cop.push_back({p, INF});
+
+    // sort by efficiency
+    sort(all(cop), cmp);
+
+    ll cost = p;
+    int toInform = n - 1;
+
+    for(int i = 0; i < n + 1; i++) {
+        if(cop[i].second >= toInform) {
+            cost += toInform * cop[i].first;
+            break;
+        } else {
+            cost += cop[i].first * cop[i].second;
+            toInform -= cop[i].second;
+        }
+    }
+
+    cout << cost << '\n';
 }
 
 int main(){

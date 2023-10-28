@@ -18,17 +18,20 @@ using namespace std;
 typedef long long ll;
 typedef pair<int,int> pii;
 
+const ll MOD = 1e9 + 7;
+const ll DIM = 1e6;
+const ll INF = 1e9;
+vector<int> DX = {0, 1, -1, 0};
+vector<int> DY = {1, 0, 0, -1};
+string DIR = "RDUL";
+
 struct Edge {
     int a, b, index;
     ll w;
-
-    bool operator<(Edge other) {
-        return w < other.w;
-    }
 };
 
-bool cmp(const Edge e1, const Edge e2) {
-    return e1.index < e2.index;
+bool cmp1(const Edge e1, const Edge e2) {
+    return e1.w > e2.w;
 }
 
 struct DSU {
@@ -62,13 +65,6 @@ struct DSU {
     }
 };
 
-const ll MOD = 1e9 + 7;
-const ll DIM = 1e6;
-const ll INF = 1e9;
-vector<int> DX = {0, 1, -1, 0};
-vector<int> DY = {1, 0, 0, -1};
-string DIR = "RDUL";
-
 void solve(){
     int n, m;
     ll s;
@@ -87,12 +83,11 @@ void solve(){
         edges.push_back({a, b, i, w});
         edgesDeleted.insert(i);
     }
-    sort(edges.rbegin(), edges.rend());
+    sort(all(edges), cmp1);
     ll sumAddedEdges = 0;
 
     DSU dsu = DSU(n);
     
-
     for(int i = 0, e = 0; i < m && e < n - 1; i++) {
         if(dsu.unite(edges[i].a, edges[i].b)) {
             sumAddedEdges += edges[i].w;
@@ -110,19 +105,22 @@ void solve(){
     while(pEdges < m && (totalSum - sumAddedEdges) >= s) {
         // I have to add an edge
         // which edge?
-        while(added.count(edges[pEdges].index) != 0) {
+        while(pEdges < m && added.count(edges[pEdges].index) > 0) {
             pEdges++;
         }
-        sumAddedEdges += edges[pEdges].w;
-        edgesDeleted.erase(edges[pEdges].index);
-        pEdges++;
+
+        if(pEdges < m) {
+            sumAddedEdges += edges[pEdges].w;
+            edgesDeleted.erase(edges[pEdges].index);
+            pEdges++;
+        }
     }
 
     /*for(int i = 0; i < m; i++) {
         cout << edges[i].a << " " << edges[i].b << " " << edges[i].w << '\n';
     }*/
 
-    int deleted = m - added.size();
+    int deleted = edgesDeleted.size();
     cout << deleted << '\n';
     for(auto it = edgesDeleted.begin(); it != edgesDeleted.end(); it++) {
         cout << *it + 1 << " ";

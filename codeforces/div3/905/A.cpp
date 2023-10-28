@@ -11,7 +11,6 @@
 #include <bitset>
 
 #define all(x) (x).begin(), (x).end()
-#define mp make_pair
 #define pb push_back
 #define rep(X,Y) for (int (X) = 0;(X) < (Y);++(X))
 #define reps(X,S,Y) for (int (X) = S;(X) < (Y);++(X))
@@ -33,7 +32,19 @@ vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
 void solve(){
-    
+    string s; cin >> s;
+    map<int, int> mp;
+    for(int i = 1; i < 10; i++) {
+        mp[i] = i - 1;
+    }
+    mp[0] = 9;
+
+    int ans = 4 + abs(mp[1] - mp[s[0] - '0']);
+    for(int i = 0; i < 3; i++) {
+        ans += abs(mp[s[i] - '0'] - mp[s[i + 1] - '0']);
+    }
+
+    cout << ans << '\n';
 }
 
 int main(){

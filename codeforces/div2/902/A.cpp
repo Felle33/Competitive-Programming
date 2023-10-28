@@ -33,7 +33,18 @@ vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
 void solve(){
-    
+    int n; cin >> n;
+    vll a(n - 1);
+    rep(i, n - 1) {
+        cin >> a[i];
+    }
+
+    int ans = 0;
+    rep(i, n - 1) {
+        ans += a[i];
+    }
+
+    cout << -ans << '\n';
 }
 
 int main(){
