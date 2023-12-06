@@ -32,7 +32,15 @@ vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
 void solve(){
-    
+    int n; cin >> n;
+    ll ans = 3000;
+
+    rep(i, n) {
+        int a; cin >> a;
+        ans += a;
+    }
+
+    cout << ans << '\n';
 }
 
 int main(){
@@ -41,10 +49,5 @@ int main(){
     std::cout.precision(10);
     cout << std::fixed;
 
-    int t;
-    cin >> t;
-
-    while(t--){
-        solve();
-    }
+    solve();
 }

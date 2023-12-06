@@ -31,8 +31,27 @@ vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
+int d;
+
+ll sumDigits(ll n) {
+    ll ans = 0;
+    while(n > 0) {
+        ans += n % 10;
+        n /= 10;
+    }
+    return ans;
+}
+
+ll rec(int n) {
+    if(n == 1) return d;
+    ll res = rec(n - 1);
+    return 2 * res + sumDigits(n);
+}
+
 void solve(){
-    
+    int n; cin >> d >> n;
+
+    cout << rec(n) << '\n';
 }
 
 int main(){
@@ -41,10 +60,5 @@ int main(){
     std::cout.precision(10);
     cout << std::fixed;
 
-    int t;
-    cin >> t;
-
-    while(t--){
-        solve();
-    }
+    solve();
 }

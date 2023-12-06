@@ -31,8 +31,36 @@ vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
+bool cmp(pii& a, pii& b) {
+    if(a.first == b.first) return a.second < b.second;
+    return a.first < b.first;
+}
+
 void solve(){
-    
+    int n; cin >> n;
+    vector<pii> log(n);
+
+    rep(i, n) {
+        int a, b;
+        cin >> log[i].second >> log[i].first;
+    }
+
+    sort(all(log), cmp);
+
+    ll ans = 0;
+    ll cur = 0;
+
+    for(pii& p : log) {
+        if(p.second == -1) {
+            cur--;
+        } else {
+            cur++;
+        }
+        ans = max(ans, cur);
+    }
+
+    cout << ans << '\n';
+
 }
 
 int main(){
@@ -41,10 +69,5 @@ int main(){
     std::cout.precision(10);
     cout << std::fixed;
 
-    int t;
-    cin >> t;
-
-    while(t--){
-        solve();
-    }
+    solve();
 }
