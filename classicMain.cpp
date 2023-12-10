@@ -23,7 +23,9 @@ typedef vector<vector<int>> vvi;
 typedef long long ll;
 typedef pair<int,int> pii;
 
-const ll MOD = 1e9 + 7;
+const ll MOD1 = 1e9 + 7;
+const ll MOD2 = 998244353;
+const ll MOD3 = 99999999999999997;
 const ll DIM = 1e6;
 const ll INF = 1e15;
 const ll LL_MAX = 9223372036854775807;
