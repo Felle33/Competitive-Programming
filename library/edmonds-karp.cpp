@@ -40,40 +40,53 @@ int n;
 vvi adj;
 
 // capacity of every edge
-vvi cap;
+vector<vll> cap;
 
 // Given a graph, the algo calculates the max flow from the source (node 0)
 // to the end point (node n - 1)
-// To do this we run a dfs
-// Time complexity O(f * n)
+// To do this we run a bfs
+// Time complexity O(|V| * |E| * |E|)
 
-int dfs(int node, int sink, int minCapacity, vector<bool>& visited) {
-    if(node == sink) return minCapacity;
-    visited[node] = 1;
-    
-    for(int to : adj[node]) {
-        if(cap[node][to] > 0 && !visited[to]) {
-            int res = dfs(to, sink, min(minCapacity, cap[node][to]), visited);
-            if(res > 0) {
-                cap[node][to] -= res;
-                cap[to][node] += res;
-                return res;
+ll bfs(int source, int sink, vi& parent) {
+    fill(all(parent), -1);
+    parent[source] = -2;
+    queue<pair<int, ll>> q;
+    q.push(mp(source, INF));
+
+    while(!q.empty()) {
+        int node = q.front().first;
+        ll capacity = q.front().second;
+        q.pop();
+
+        for(int to : adj[node]) {
+            if(parent[to] == -1 && cap[node][to] > 0) {
+                parent[to] = node;
+                ll new_flow = min(capacity, cap[node][to]);
+                if (to == sink)
+                    return new_flow;
+                q.push(mp(to, new_flow));
             }
         }
     }
-
     return 0;
 }
 
-int ford_fulkerson(int source, int sink) {
-    vector<bool> visited(n);
+ll edmonds_karp(int source, int sink) {
+    vi parent(n + 1);
     int result = 0;
     while(1) {
-        int currFlow  = dfs(source, sink, INF_INT, visited);
+        ll currFlow  = bfs(source, sink, parent);
         result += currFlow;
 
         if(currFlow  == 0) break;
-        fill(all(visited), 0);
+        int from = parent[sink];
+        int dest = sink; 
+        while (dest != source) {
+            cap[from][dest] -= currFlow;
+            cap[dest][from] += currFlow;
+            dest = from;
+            from = parent[from];
+        }
     }
 
     return result;
@@ -83,7 +96,7 @@ void solve(){
     n = 4;
     int source = 1, sink = 4;
     adj = vvi(n + 1);
-    cap = vvi(n + 1, vi(n + 1));
+    cap = vector<vll>(n + 1, vll(n + 1));
     
     adj[1].push_back(2);
     adj[2].push_back(1);
@@ -105,7 +118,7 @@ void solve(){
     adj[4].push_back(3);
     cap[3][4] = 10;
     
-    printf("%d\n", ford_fulkerson(source, sink));
+    printf("%d\n", edmonds_karp(source, sink));
 }
 
 int main(){

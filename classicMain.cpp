@@ -28,6 +28,7 @@ const ll MOD2 = 998244353;
 const ll MOD3 = 99999999999999997;
 const ll DIM = 1e6;
 const ll INF = 1e15;
+const int INF_INT = 1e9;
 const ll LL_MAX = 9223372036854775807;
 vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};

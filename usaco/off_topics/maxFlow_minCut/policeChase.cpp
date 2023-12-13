@@ -34,18 +34,11 @@ vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
-int n;
+int n, m;
 
-// adjecency graph
 vvi adj;
-
-// capacity of every edge
 vvi cap;
-
-// Given a graph, the algo calculates the max flow from the source (node 0)
-// to the end point (node n - 1)
-// To do this we run a dfs
-// Time complexity O(f * n)
+vector<bool> visited;
 
 int dfs(int node, int sink, int minCapacity, vector<bool>& visited) {
     if(node == sink) return minCapacity;
@@ -66,7 +59,6 @@ int dfs(int node, int sink, int minCapacity, vector<bool>& visited) {
 }
 
 int ford_fulkerson(int source, int sink) {
-    vector<bool> visited(n);
     int result = 0;
     while(1) {
         int currFlow  = dfs(source, sink, INF_INT, visited);
@@ -79,33 +71,50 @@ int ford_fulkerson(int source, int sink) {
     return result;
 }
 
+void compute_s_group(int node, vi& source_group, vector<bool>& visited) {
+    source_group.pb(node);
+    visited[node] = 1;
+
+    for(int to : adj[node]) {
+        if(!visited[to] && cap[node][to] > 0) {
+            compute_s_group(to, source_group, visited);
+        }
+    }
+}
+
 void solve(){
-    n = 4;
-    int source = 1, sink = 4;
-    adj = vvi(n + 1);
-    cap = vvi(n + 1, vi(n + 1));
-    
-    adj[1].push_back(2);
-    adj[2].push_back(1);
-    cap[1][2] = 40;
-    
-    adj[1].push_back(4);
-    adj[4].push_back(1);
-    cap[1][4] = 20;
-    
-    adj[2].push_back(4);
-    adj[4].push_back(2);
-    cap[2][4] = 20;
-    
-    adj[2].push_back(3);
-    adj[3].push_back(2);
-    cap[2][3] = 30;
-    
-    adj[3].push_back(4);
-    adj[4].push_back(3);
-    cap[3][4] = 10;
-    
-    printf("%d\n", ford_fulkerson(source, sink));
+    cin >> n >> m;
+    adj = vvi(n);
+    cap = vvi(n, vi(n, 1));
+    visited = vector<bool>(n);
+
+    rep(i, m) {
+        int a, b; cin >> a >> b;
+        a--, b--;
+        adj[a].pb(b);
+        adj[b].pb(a);
+    }
+
+    cout << ford_fulkerson(0, n - 1) << '\n';
+
+    vi source_group;
+    fill(all(visited), 0);
+    compute_s_group(0, source_group, visited);
+    set<int> sink_group;
+
+    for(int i = 1; i < n; i++) {
+        if(!visited[i]) {
+            sink_group.insert(i);
+        }
+    }
+
+    for(int node : source_group) {
+        for(int to : adj[node]) {
+            if(sink_group.count(to)) {
+                cout << node + 1 << " " << to + 1 << '\n';
+            }
+        }
+    }
 }
 
 int main(){

@@ -34,78 +34,78 @@ vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
-int n;
+const int MAX_N = 500;
+
+int n, m;
 
 // adjecency graph
-vvi adj;
+vi adj[MAX_N];
 
 // capacity of every edge
-vvi cap;
+ll cap[MAX_N][MAX_N];
 
 // Given a graph, the algo calculates the max flow from the source (node 0)
 // to the end point (node n - 1)
-// To do this we run a dfs
-// Time complexity O(f * n)
+// To do this we run a bfs
+// Time complexity O(|V| * |E| * |E|)
 
-int dfs(int node, int sink, int minCapacity, vector<bool>& visited) {
-    if(node == sink) return minCapacity;
-    visited[node] = 1;
-    
-    for(int to : adj[node]) {
-        if(cap[node][to] > 0 && !visited[to]) {
-            int res = dfs(to, sink, min(minCapacity, cap[node][to]), visited);
-            if(res > 0) {
-                cap[node][to] -= res;
-                cap[to][node] += res;
-                return res;
+ll bfs(int source, int sink, vi& parent) {
+    fill(all(parent), -1);
+    parent[source] = -2;
+    queue<pair<int, ll>> q;
+    q.push({source, INF});
+
+    while(!q.empty()) {
+        int node = q.front().first;
+        ll capacity = q.front().second;
+        q.pop();
+
+        for(int to : adj[node]) {
+            if(parent[to] == -1 && cap[node][to] > 0) {
+                parent[to] = node;
+                ll new_flow = min(capacity, cap[node][to]);
+                if (to == sink)
+                    return new_flow;
+                q.push({to, new_flow});
             }
         }
     }
-
     return 0;
 }
 
-int ford_fulkerson(int source, int sink) {
-    vector<bool> visited(n);
-    int result = 0;
+ll edmonds_karp(int source, int sink) {
+    vi parent(n + 1);
+    ll result = 0;
     while(1) {
-        int currFlow  = dfs(source, sink, INF_INT, visited);
+        ll currFlow  = bfs(source, sink, parent);
         result += currFlow;
 
         if(currFlow  == 0) break;
-        fill(all(visited), 0);
+        int from = parent[sink];
+        int dest = sink; 
+        while (dest != source) {
+            cap[from][dest] -= currFlow;
+            cap[dest][from] += currFlow;
+            dest = from;
+            from = parent[from];
+        }
     }
 
     return result;
 }
 
 void solve(){
-    n = 4;
-    int source = 1, sink = 4;
-    adj = vvi(n + 1);
-    cap = vvi(n + 1, vi(n + 1));
-    
-    adj[1].push_back(2);
-    adj[2].push_back(1);
-    cap[1][2] = 40;
-    
-    adj[1].push_back(4);
-    adj[4].push_back(1);
-    cap[1][4] = 20;
-    
-    adj[2].push_back(4);
-    adj[4].push_back(2);
-    cap[2][4] = 20;
-    
-    adj[2].push_back(3);
-    adj[3].push_back(2);
-    cap[2][3] = 30;
-    
-    adj[3].push_back(4);
-    adj[4].push_back(3);
-    cap[3][4] = 10;
-    
-    printf("%d\n", ford_fulkerson(source, sink));
+    cin >> n >> m;
+    rep(i, m) {
+        ll a, b, c;
+        cin >> a >> b >> c;
+        a--, b--;
+        adj[a].pb(b);
+        adj[b].pb(a);
+        cap[a][b] += c;
+    }
+
+    cout << edmonds_karp(0, n - 1) << '\n';
 }
 
 int main(){
