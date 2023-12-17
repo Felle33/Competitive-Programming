@@ -8,6 +8,7 @@
 #include <set>
 #include <iomanip>
 #include <bitset>
+#include <unordered_map>
 
 #define all(x) (x).begin(), (x).end()
 #define mp make_pair
@@ -34,83 +35,95 @@ vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
+const int MAX_N = 10000;
+
 int n, m;
 string haystack;
-
-ll b = 127;
+ 
+ll b = 37;
 // hash -> index in strings (1-indexed)
-map<int, int> hashes;
-
+unordered_map<int, int> hashes;
+ 
+// pref for the haystack
+vector<ll> prefs(MAX_N + 1);
+vector<ll> pows(MAX_N + 1);
+vector<string> strings(MAX_N);
+vector<int> dp(MAX_N + 1, -1);
+ 
 ll ord(char c) {
     c = tolower(c);
-    return c - 'A' + 1;
+    return c - 'a' + 1;
 }
-
-void compute_rolling_hash(string& s, int index) {
+ 
+void compute_rolling_hash_strings(string& s, int index) {
     int k = s.size();
     ll h = 0;
-
+ 
     for(int i = 0; i < k; i++) {
         h = (h * b + ord(s[i])) % MOD1;
     }
     hashes[h] = index;
 }
+ 
+void compute_rolling_hash_haystack(string& haystack) {
+    prefs[0] = 0;
+    pows[0] = 1;
+ 
+    for(int i = 0; i < n; i++) {
+        pows[i + 1] = pows[i] * b % MOD1;
+        prefs[i + 1] = (prefs[i] * b + ord(haystack[i])) % MOD1;
+    }
+}
 
-int rec(int start, vi& dp) {
-    if(start >= n) return 1;
-    if(dp[start] != -1) return dp[start];
-
-    ll h = 0;
-    for(int i = start; i < n; i++) {
-        h = (h * b + ord(haystack[i])) % MOD1;
-        if(hashes.count(h)) {
-            int res = rec(i + 1, dp);
-            if(res >= 1) {
-                dp[start] = hashes[h];
-                return 1;
+void print(vi& dp, int state) {
+    if(state >= n) return;
+    print(dp, state + (int)strings[dp[state] - 1].size());
+    if(state == 0) {
+        cout << strings[dp[state] - 1] << '\n';
+    } else {
+        cout << strings[dp[state] - 1] << ' ';
+    }
+}
+ 
+void solve(){
+    cin >> n >> haystack >> m;
+    rep(i, m) {
+        cin >> strings[i];
+        compute_rolling_hash_strings(strings[i], i + 1);
+    }
+ 
+    reverse(all(haystack));
+ 
+    //compute_rolling_hash_haystack(haystack);
+ 
+    
+    // vector that contains the indexes in the haystack
+    // from which I deciphered a word
+    // vector<int> index_deciphered;
+    // I deciphered nothing!
+    // index_deciphered.pb(n);
+ 
+    for(int start = n - 1; start >= 0; start--) {
+        ll h = 0;
+        for(int i = start; i < min(n, i + 1001); i++) {
+            h = (h * b + ord(haystack[i])) % MOD1;
+            if(hashes.count(h)) {
+                // hash of all the haystack from i to n - 1
+                if(i == n - 1 || dp[i + 1] != -1) {
+                    dp[start] = hashes[h];
+                }
             }
         }
     }
 
-    dp[start] = 0;
-    return -1;
+    print(dp, 0);
 }
-
-void solve(){
-    cin >> n >> haystack >> m;
-    vector<string> strings(m);
-    rep(i, m) {
-        cin >> strings[i];
-        compute_rolling_hash(strings[i], i + 1);
-    }
-
-    reverse(all(haystack));
-
-    vector<int> dp(n, -1);
-    rec(0, dp);
-
-    vector<int> index_words;
-
-    int index_dp = 0;
-    while(index_dp < n) {
-        int index_word = dp[index_dp] - 1;
-        index_words.pb(index_word);
-        index_dp += strings[index_word].size();
-    }
-    
-    reverse(all(index_words));
-    string ans = "";
-    for(int i = 0; i < (int) index_words.size(); i++) {
-        ans += strings[index_words[i]] + (i < n - 1 ? " " : "");
-    }
-    cout << ans << '\n';
-}
-
+ 
 int main(){
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     std::cout.precision(10);
     cout << std::fixed;
-
+ 
     solve();
 }

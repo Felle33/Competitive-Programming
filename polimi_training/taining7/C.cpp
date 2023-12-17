@@ -37,41 +37,65 @@ string DIR = "RDUL";
 void solve(){
     int n; cin >> n;
     vector<pii> points(n);
-    set<pair<double, double>> set_diag;
+
     set<int> set_hor;
     set<int> set_ver;
 
     ll ans = 0;
-    ll ver = 0, hor = 0, diag = 0;
+    // add a map with key the slope
+    map<pii, set<int>> slope_int;
+
     rep(i, n) {
         cin >> points[i].first >> points[i].second;
         for(int j = 0; j < i; j++) {
             if(points[j].first == points[i].first) {
                 // it is a vertical point
                 if(set_ver.count(points[i].first) == 0) {
-                    ver++;
                     set_ver.insert(points[i].first);
-                    ans += diag + hor;
                 }
                 
             } else if(points[j].second == points[i].second) {
                 if(set_hor.count(points[i].second) == 0) {
-                    hor++;
                     set_hor.insert(points[i].second);
-                    ans += diag + ver;
                 }
                 
             } else {
                 // calc the slope and the y in (0, 0)
-                double m =  ((double) points[j].second - points[i].second) / ((double) points[j].first - points[i].first);
-                double y0 = -m * points[i].first + points[i].second;
-                if(set_diag.count({m, y0}) == 0) {
-                    ans += diag + ver + hor;
-                    set_diag.insert({m, y0});
-                    diag++;
+                // I count the intersection of 2 different lines with the same slope
+                int a = points[i].second - points[j].second;
+                int b = -(points[i].first - points[j].first);
+                int c = -points[i].second * points[j].first - points[j].second * points[i].first;
+
+                int gcd = __gcd(abs(a), __gcd(abs(b), abs(c)));
+                a /= gcd;
+                b /= gcd;
+                c /= gcd;
+
+                if(a < 0 || (a == 0 && b < 0)) {
+                    a = -a;
+                    b = -b;
+                    c = -c;
+                }
+
+                if(slope_int[{a, b}].count(c) == 0) {
+                    slope_int[{a, b}].insert(c);
                 }
             }
         }
+    }
+
+    ll ver = set_ver.size();
+    ll hor = set_hor.size();
+    ll diag = 0;
+    for(auto it = slope_int.begin(); it != slope_int.end(); it++) {
+        diag += it->second.size();
+    }
+
+    ans += hor * ver + hor * diag + ver * diag;
+
+    for(auto it = slope_int.begin(); it != slope_int.end(); it++) {
+        diag -= it->second.size();
+        ans += 1LL * diag * it->second.size();
     }
 
     cout << ans << '\n';

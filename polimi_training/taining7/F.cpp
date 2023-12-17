@@ -54,29 +54,8 @@ void solve(){
 
     sort(all(times));
 
-    vector<interval> intervals;
-    for(int i = 1; i < n; i++) {
-        intervals.pb({times[i] - times[i - 1], times[i - 1], times[i]});
-    }
-
-    sort(all(intervals), cmp);
-
-    set<int> left_int, right_int;
-
-    ll ans = 0;
-    int to_add = k;
-    for(int i = 0; to_add > 0; i++) {
-        interval& interv = intervals[i];
-
-        if(left_int.count(interv.right) == 0 && right_int.count(interv.left) == 0) {
-            ans += interv.length;
-            left_int.insert(interv.left);
-            right_int.insert(interv.right);
-            to_add--;
-        }
-    }
-
-    cout << ans << '\n';
+    
+    
 }
 
 int main(){

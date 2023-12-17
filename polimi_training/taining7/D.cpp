@@ -36,68 +36,65 @@ string DIR = "RDUL";
 
 const int MAX_N = 1000;
 
-int n;
-string strings[1000];
-ll ans = INF;
-bool already_mapped[10];
-int conversion[10];
-map<char, int> map_letter_int;
-int next_int_to_map = 1;
+vector<pair<char, ll>> weights(10);
 
-ll convert_string(string& s) {
-    ll conv = 0;
+void compute_weight(string& s) {
     int k = s.size();
-    for(int i = 0; i < k; i++) {
-        conv *= 10;
-        conv += conversion[s[i] - 'a'];
+    ll weight = 1;
+    for(int i = k - 1; i >= 0; i--) {
+        weights[s[i] - 'a'].second += weight;
+        weight *= 10;
     }
-    return conv;
 }
 
-void calc_number() {
-    ll cur = 0;
-    for(int i = 0; i < n; i++) {
-        cur += convert_string(strings[i]);
-    }
-    ans = min(ans, cur);
-}
-
-void rec(int missingLetters) {
-    if(missingLetters == 0) {
-        calc_number();
-        return;
-    }
-
-    for(int i = 0; i < 10; i++) {
-        char c = 'a' + i;
-        if(!already_mapped[i]) {
-            already_mapped[i] = 1;
-            conversion[i] = next_int_to_map;
-            next_int_to_map++;
-            rec(missingLetters - 1);
-            next_int_to_map--;
-            already_mapped[i] = 0;
-        }
-    }
+bool cmp(pair<char, ll>& p1, pair<char, ll>& p2) {
+    return p1.second > p2.second;
 }
 
 void solve(){
-    cin >> n;
+    int n; cin >> n;
     set<int> first_letters;
-
+    vector<string> strings(n);
+    for(int i = 0; i < 10; i++) weights[i].first = 'a' + i;
+    
     rep(i, n) {
         cin >> strings[i];
         first_letters.insert(strings[i][0]);
+        compute_weight(strings[i]);
     }
 
-    for(int i = 0; i < 10; i++) {
-        char c = 'a' + i;
-        if(first_letters.count(c) == 0) {
-            already_mapped[i] = 1;
-            conversion[i] = 0;
-            rec(9);
-            already_mapped[i] = 0;
+    sort(all(weights), cmp);
+    vector<bool> assigned(10);
+    vector<int> digits(10);
+
+    int it = 0;
+    char c = weights[it].first;
+    while(first_letters.count(c) > 0) {
+        it++;
+        c = weights[it].first;
+    }
+    digits[c - 'a'] = 0;
+    assigned[c - 'a'] = 1;
+
+    for(int digit = 1; digit < 10; digit++) {
+        for(pair<char, ll>& p : weights) {
+            char c = p.first;
+            if(assigned[c - 'a']) continue;
+            
+            digits[c - 'a'] = digit;
+            assigned[c - 'a'] = 1;
+            break;
         }
+    }
+
+    ll ans = 0;
+    for(string& s : strings) {
+        ll cur = 0;
+        for(int i = s.size() - 1, weight = 1; i >= 0; i--) {
+            cur += digits[s[i] - 'a'] * weight;
+            weight *= 10;
+        }
+        ans += cur;
     }
 
     cout << ans << '\n';
