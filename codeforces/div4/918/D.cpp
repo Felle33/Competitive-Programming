@@ -34,55 +34,62 @@ vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
-const int MAX_N = 1e6;
-
 int n;
-int letters[26];
-int permutations[MAX_N + 1];
+string s;
+vector<int> dp;
 
-ll exponentiation(ll b, ll e){
-    ll res = 1;
-    b %= MOD1;
-    while(e > 0){
-        if(e & 1) {
-            res = res * b % MOD1;
-        }  
-        
-        b = b * b % MOD1;
-        e >>= 1;
-    }
-
-    return res;
+bool vow(char c) {
+    return c == 'a' || c == 'e';
 }
 
-ll factorial() {
-    ll res = 1;
-    permutations[0] = 1;
-    for(ll i = 1; i <= n; i++) {
-        res = (res * i) % MOD1;
-        permutations[i] = res;
-    }
-    return res;
+bool cons(char c ) {
+    return c == 'b' || c == 'c' || c == 'd';
 }
 
-void solve(){
-    string s; cin >> s;
-    n = s.size();
+bool f(int i) {
+    if(i >= n) return true;
+    if(vow(s[i])) return false;
+    if(dp[i] != -1) return 1;
 
-    for(char c : s) {
-        letters[c - 'a']++;
-    }
-
-    ll fact = factorial();
-
-    for(int i = 0; i < 26; i++) {
-        if(letters[i] > 1) {
-            ll inv = exponentiation(permutations[letters[i]], MOD1 - 2);
-            fact = fact * inv % MOD1;
+    bool cur = 0;
+    if(i < n - 1 && vow(s[i + 1])) {
+        bool res = f(i + 2);
+        if(res) {
+            cur = 1;
+            dp[i] = i + 2;
         }
     }
 
-    cout << fact << '\n';
+    if(i < n - 2 && vow(s[i + 1]) && cons(s[i + 2])) {
+        bool res = f(i + 3);
+        if(res) {
+            cur = 1;
+            dp[i] = i + 3;
+        }
+    }
+
+    return cur;
+}
+
+void solve(){
+    cin >> n;
+    cin >> s;
+
+    dp = vi(n, -1);
+
+    f(0);
+
+    string ans = "";
+    for(int i = 0, k = 0; i < n; ) {
+        if(dp[k] == i) {
+            ans += '.';
+            k = dp[k];
+        } else {
+            ans += s[i];
+            i++;
+        }
+    }
+    cout << ans << '\n';
 }
 
 int main(){
@@ -91,5 +98,10 @@ int main(){
     std::cout.precision(10);
     cout << std::fixed;
 
-    solve();
+    int t;
+    cin >> t;
+
+    while(t--){
+        solve();
+    }
 }

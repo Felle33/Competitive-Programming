@@ -34,55 +34,28 @@ vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
-const int MAX_N = 1e6;
-
-int n;
-int letters[26];
-int permutations[MAX_N + 1];
-
-ll exponentiation(ll b, ll e){
-    ll res = 1;
-    b %= MOD1;
-    while(e > 0){
-        if(e & 1) {
-            res = res * b % MOD1;
-        }  
-        
-        b = b * b % MOD1;
-        e >>= 1;
-    }
-
-    return res;
-}
-
-ll factorial() {
-    ll res = 1;
-    permutations[0] = 1;
-    for(ll i = 1; i <= n; i++) {
-        res = (res * i) % MOD1;
-        permutations[i] = res;
-    }
-    return res;
-}
-
 void solve(){
-    string s; cin >> s;
-    n = s.size();
-
-    for(char c : s) {
-        letters[c - 'a']++;
+    vector<string> grid(3);
+    rep(i, 3) {
+        cin >> grid[i];
     }
 
-    ll fact = factorial();
+    for(int i = 0; i < 3; i++) {
+        for(int j = 0; j < 3; j++) {
+            if(grid[i][j] == '?') {
+                int a = 0, b = 0, c = 0;
+                for(int k = 0; k < 3; k++) {
+                    if(grid[k][j] == 'A') a++;
+                    if(grid[k][j] == 'B') b++;
+                    if(grid[k][j] == 'C') c++;
+                }
 
-    for(int i = 0; i < 26; i++) {
-        if(letters[i] > 1) {
-            ll inv = exponentiation(permutations[letters[i]], MOD1 - 2);
-            fact = fact * inv % MOD1;
+                if(a == 0) cout << 'A' << '\n';
+                if(b == 0) cout << 'B' << '\n';
+                if(c == 0) cout << 'C' << '\n';
+            }
         }
     }
-
-    cout << fact << '\n';
 }
 
 int main(){
@@ -91,5 +64,10 @@ int main(){
     std::cout.precision(10);
     cout << std::fixed;
 
-    solve();
+    int t;
+    cin >> t;
+
+    while(t--){
+        solve();
+    }
 }

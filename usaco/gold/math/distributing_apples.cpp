@@ -35,10 +35,10 @@ vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
 const int MAX_N = 1e6;
+const int MAX_M = 1e6;
 
-int n;
-int letters[26];
-int permutations[MAX_N + 1];
+int permutations[MAX_N + MAX_M];
+int n, m;
 
 ll exponentiation(ll b, ll e){
     ll res = 1;
@@ -56,33 +56,21 @@ ll exponentiation(ll b, ll e){
 }
 
 ll factorial() {
-    ll res = 1;
     permutations[0] = 1;
-    for(ll i = 1; i <= n; i++) {
-        res = (res * i) % MOD1;
-        permutations[i] = res;
+    for(ll i = 1; i <= n + m - 1; i++) {
+        permutations[i] = permutations[i - 1] * i % MOD1;
     }
-    return res;
+    return permutations[n + m - 1];
 }
 
 void solve(){
-    string s; cin >> s;
-    n = s.size();
+    cin >> n >> m;
 
-    for(char c : s) {
-        letters[c - 'a']++;
-    }
+    ll res = factorial();
+    res = res * exponentiation(permutations[n - 1], MOD1 - 2) % MOD1;
+    res = res * exponentiation(permutations[m], MOD1 - 2) % MOD1;
 
-    ll fact = factorial();
-
-    for(int i = 0; i < 26; i++) {
-        if(letters[i] > 1) {
-            ll inv = exponentiation(permutations[letters[i]], MOD1 - 2);
-            fact = fact * inv % MOD1;
-        }
-    }
-
-    cout << fact << '\n';
+    cout << res << '\n';
 }
 
 int main(){

@@ -35,7 +35,7 @@ vector<vector<pii>> adj;
 vll dis;
 
 // Time complexity O(|N - 1| * |E|)
-// In average sine sort of linear (???)
+// In average some sort of linear (???)
 void spfa() {
     dis[source] = 0;
     queue<int> q;

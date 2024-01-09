@@ -34,55 +34,31 @@ vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
-const int MAX_N = 1e6;
-
-int n;
-int letters[26];
-int permutations[MAX_N + 1];
-
-ll exponentiation(ll b, ll e){
-    ll res = 1;
-    b %= MOD1;
-    while(e > 0){
-        if(e & 1) {
-            res = res * b % MOD1;
-        }  
-        
-        b = b * b % MOD1;
-        e >>= 1;
-    }
-
-    return res;
-}
-
-ll factorial() {
-    ll res = 1;
-    permutations[0] = 1;
-    for(ll i = 1; i <= n; i++) {
-        res = (res * i) % MOD1;
-        permutations[i] = res;
-    }
-    return res;
-}
-
 void solve(){
-    string s; cin >> s;
-    n = s.size();
-
-    for(char c : s) {
-        letters[c - 'a']++;
+    int n; cin >> n;
+    vector<int> a(n);
+    ll sum = 0;
+    rep(i, n) {
+        cin >> a[i];
+        sum += a[i];
     }
 
-    ll fact = factorial();
+    ll l = 0, r = 1e8;
+    while(l + 1 < r) {
+        ll mid = l + (r - l) / 2;
 
-    for(int i = 0; i < 26; i++) {
-        if(letters[i] > 1) {
-            ll inv = exponentiation(permutations[letters[i]], MOD1 - 2);
-            fact = fact * inv % MOD1;
+        if(mid * mid >= sum) {
+            r = mid;
+        } else {
+            l = mid;
         }
     }
 
-    cout << fact << '\n';
+    if(r * r == sum) {
+        cout << "YES\n";
+    } else {
+        cout << "NO\n";
+    }
 }
 
 int main(){
@@ -91,5 +67,10 @@ int main(){
     std::cout.precision(10);
     cout << std::fixed;
 
-    solve();
+    int t;
+    cin >> t;
+
+    while(t--){
+        solve();
+    }
 }
