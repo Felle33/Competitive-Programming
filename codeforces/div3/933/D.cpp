@@ -36,7 +36,39 @@ vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
 void solve(){
-    
+    int n, m, x; cin >> n >> m >> x;
+
+    x--;
+    set<int> curSet;
+    curSet.insert(x);
+
+    rep(i, m) {
+        set<int> nextSet;
+        int f;
+        char c;
+        cin >> f >> c;
+
+        for(int el : curSet) {
+            if(c == '0') {
+                nextSet.insert((el + f) % n);
+            } else if(c == '1') {
+                int nextOne = el - f;
+                nextSet.insert(nextOne < 0 ? nextOne + n : nextOne);
+            } else {
+                nextSet.insert((el + f) % n);
+                int nextOne = el - f;
+                nextSet.insert(nextOne < 0 ? nextOne + n : nextOne);
+            }
+        }
+        
+        curSet = nextSet;
+    }
+
+    cout << curSet.size() << '\n';
+    for(int el : curSet) {
+        cout << el + 1 << ' ';
+    }
+    cout << '\n';
 }
 
 int main(){

@@ -36,7 +36,40 @@ vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
 void solve(){
-    
+    int n; cin >> n;
+    vector<int> a(n);
+    rep(i, n) cin >> a[i];
+    sort(all(a));
+
+    multiset<int> nums;
+    for(int i = 0; i < n; ) {
+        int num = a[i];
+        int j = i;
+        while(j < n && a[j] == num) j++;
+        nums.insert(j - i);
+        i = j;
+    }
+
+    int ans = 0;
+    for(int start = 1; start <= 2e5; start++) {
+        vector<int> buffer;
+        int cnt = start;
+        int curAns = 0;
+
+        while(1) {
+            auto it = nums.lower_bound(cnt);
+            if(it == nums.end()) break;
+            curAns += cnt;
+            cnt *= 2;
+            buffer.push_back(*it);
+            nums.erase(it);
+        }
+
+        ans = max(ans, curAns);
+        for(int x : buffer) nums.insert(x);
+    }
+
+    cout << ans << '\n';
 }
 
 int main(){
@@ -45,10 +78,5 @@ int main(){
     std::cout.precision(10);
     cout << std::fixed;
 
-    int t;
-    cin >> t;
-
-    while(t--){
-        solve();
-    }
+    solve();
 }

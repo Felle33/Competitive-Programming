@@ -36,7 +36,26 @@ vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
 void solve(){
-    
+    int n; cin >> n;
+    vi a(n);
+    rep(i, n) cin >> a[i];
+
+    for(int i = 0; i < n - 2; i++) {
+        if(a[i] < 0) break;
+        int sot = a[i];
+        a[i] -= sot;
+        a[i + 1] -= 2 * sot;
+        a[i + 2] -= sot;
+    }
+
+    rep(i, n) {
+        if(a[i] != 0) {
+            cout << "NO\n";
+            return;
+        }
+    }
+
+    cout << "YES\n";
 }
 
 int main(){

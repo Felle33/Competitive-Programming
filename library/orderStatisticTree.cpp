@@ -9,6 +9,9 @@
 #include <set>
 #include <iomanip>
 #include <bitset>
+#include <iostream>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
 
 #define all(x) (x).begin(), (x).end()
 #define mp make_pair
@@ -17,6 +20,16 @@
 #define reps(X,S,Y) for (int (X) = S;(X) < (Y);++(X))
 
 using namespace std;
+using namespace __gnu_pbds;
+
+typedef
+tree<
+  int,
+  int,
+  less<int>,
+  rb_tree_tag,
+  tree_order_statistics_node_update>
+map_t;
 typedef vector<int> vi;
 typedef vector<long long> vll;
 typedef vector<unsigned long long> vull;

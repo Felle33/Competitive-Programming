@@ -35,8 +35,54 @@ vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
-void solve(){
+int n, m, k, d;
+
+ll calc(vll& row) {
+    vector<ll> minCost(m);
+    deque<pair<ll, ll>> dq;
+
+    for(int i = 0; i < m && i <= d; i++) {
+        while(!dq.empty() && dq.front().first >= row[i]) {
+            dq.pop_front();
+        }
+
+        if(!dq.empty() && dq.back().second < i - d) {
+            dq.pop_back();
+        }
+        dq.push_front({row[i], i});
+    }
     
+    for(int i = d; i < m; i++) {
+        minCost[i] = dq.back().first + 1;
+        
+        while(!dq.empty() && dq.front().first >= minCost[i] + row[i]) {
+            dq.pop_front();
+        }
+
+        if(!dq.empty() && dq.back().second < i - d) {
+            dq.pop_back();
+        }
+        dq.push_front({minCost[i] + row[i], i});
+    }
+
+    return minCost[n - 1] + 1;
+}
+
+// UNFINISHED
+void solve(){
+    cin >> n >> m >> k >> d;
+
+    vector<vll> grid(n, vll(m));
+    rep(i, n) {
+        rep(j, m) {
+            cin >> grid[i][j];
+        }
+    }
+
+    vll cost(n);
+    rep(i, n) {
+        cost[i] = calc(grid[i]);
+    }
 }
 
 int main(){

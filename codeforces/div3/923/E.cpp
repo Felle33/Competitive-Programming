@@ -26,17 +26,41 @@ typedef pair<int,int> pii;
 const ll MOD1 = 1e9 + 7;
 const ll MOD2 = 998244353;
 const ll MOD3 = 99999999999999997;
-const ll DIM = 1e6;
+const ll DIM = 2e5;
 const ll INF = 1e15;
 const int INF_INT = 1e9;
 const ll LL_MAX = 9223372036854775807;
-const int LOG = 22;
 vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
+const int LOG = 22;
 
 void solve(){
-    
+    int n, k;
+    cin >> n >> k;
+
+    int lower = 1, upper = n;
+
+    vi a(n);
+
+    rep(i, k) {
+        if(i % 2 == 0) {
+            for(int j = i; j < n; j += k) {
+                a[j] = lower;
+                lower++;
+            }
+        } else {
+            for(int j = i; j < n; j += k) {
+                a[j] = upper;
+                upper--;
+            }
+        }
+    }
+
+    for(int x : a) {
+        cout << x << ' ';
+    }
+    cout << '\n';
 }
 
 int main(){
