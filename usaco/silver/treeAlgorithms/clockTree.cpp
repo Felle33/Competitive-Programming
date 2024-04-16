@@ -27,8 +27,7 @@ const ll MOD1 = 1e9 + 7;
 const ll MOD2 = 998244353;
 const ll MOD3 = 99999999999999997;
 const ll DIM = 1e6;
-const int INF = 1e9;
-const ll LLINF = 1e15;
+const ll INF = 1e15;
 const int INF_INT = 1e9;
 const ll LL_MAX = 9223372036854775807;
 const int LOG = 22;
@@ -36,7 +35,19 @@ vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
+int n;
+vvi adj;
+
 void solve(){
+    cin >> n;
+    adj = vvi(n);
+    for(int i; i < n - 1; i++) {
+        int a, b; cin >> a >> b;
+        a--, b--;
+        adj[a].push_back(b);
+        adj[b].push_back(a);
+    }
+
     
 }
 
@@ -46,10 +57,5 @@ int main(){
     std::cout.precision(10);
     cout << std::fixed;
 
-    int t;
-    cin >> t;
-
-    while(t--){
-        solve();
-    }
+    solve();
 }

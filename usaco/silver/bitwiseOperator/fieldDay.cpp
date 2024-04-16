@@ -37,7 +37,46 @@ vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
 void solve(){
-    
+    int n, c; cin >> c >> n;
+    vi teams(n);
+    rep(i, n) {
+        int team = 0;
+        rep(j, c) {
+            char c; cin >> c;
+            if(c == 'H') team += (1 << j);
+        }
+        teams[i] = team;
+    }
+
+    queue<int> q;
+    vector<int> distances((1 << c) + 1, INF);
+    vector<bool> visited((1 << c) + 1);
+    for(int team : teams) {
+        q.push(team);
+        visited[team] = 1;
+        distances[team] = 0;
+    }
+
+    int dis = 0;
+    while(!q.empty()) {
+        int cycles = q.size();
+        while(cycles--) {
+            int node = q.front(); q.pop();
+            for(int j = 0; j < c; j++) {
+                int newNode = node ^ (1 << j);
+                if(!visited[newNode]) {
+                    distances[newNode] = dis + 1;
+                    visited[newNode] = 1;
+                    q.push(newNode);
+                }
+            }
+        }
+        dis++;
+    }
+
+    for(int team : teams) {
+        cout << c - distances[((1 << c) - 1) ^ team] << '\n';
+    }
 }
 
 int main(){
@@ -46,10 +85,5 @@ int main(){
     std::cout.precision(10);
     cout << std::fixed;
 
-    int t;
-    cin >> t;
-
-    while(t--){
-        solve();
-    }
+    solve();
 }

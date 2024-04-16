@@ -4,6 +4,7 @@
 #include <vector>
 #include <queue>
 #include <cstring>
+#include <unordered_map>
 #include <map>
 #include <set>
 #include <iomanip>
@@ -23,25 +24,45 @@ typedef vector<vector<int>> vvi;
 typedef long long ll;
 typedef pair<int,int> pii;
 
-const ll MOD1 = 1e9 + 7;
-const ll MOD2 = 998244353;
-const ll MOD3 = 99999999999999997;
+const ll MOD = 1e9 + 7;
 const ll DIM = 1e6;
 const ll INF = 1e15;
-const int INF_INT = 1e9;
-const ll LL_MAX = 9223372036854775807;
-const int LOG = 22;
 vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
 int n;
 vvi adj;
-vi distances;
-queue<int> q;
+vvi up1, up2;
+vi depth1, depth2;
+const int LOG = 20;
 
-int calcMostDistant(int start) {
+void dfs(int node, int parent, vi& depth, vvi& up, int lev = 0) {
+    for(int to : adj[node]) {
+        if(to != parent) {
+            depth[to] = lev + 1;
+            up[to][0] = node;
+            for(int i = 1; i < LOG; i++) {
+                up[to][i] = up[up[to][i - 1]][i - 1];
+            }
+            dfs(to, node, depth, up, lev + 1);
+        }
+    }
+}
+
+int binaryLiftingK(int u, int k, vvi& up, vi& depth) {
+    if(k > depth[u]) return -2;
+
+    for(int i = 0; i < LOG; i++) {
+        if(k & (1 << i)) u = up[u][i];
+    }
+
+    return u;
+}
+
+int mostDistant(int start) {
     int mostDistant = -1;
+    queue<int> q;
     vector<bool> visited(n);
 
     q.push(start);
@@ -59,53 +80,41 @@ int calcMostDistant(int start) {
             }
         }
     }
-
     return mostDistant;
-}
-
-void calcDistances(int start) {
-    vector<bool> visited(n);
-
-    int distance = 0;
-    q.push(start);
-    visited[start] = 1;
-
-    while(!q.empty()) {
-        int cycles = q.size();
-        while(cycles--) {
-            int node = q.front();
-            q.pop();
-            distances[node] = max(distances[node], distance);
-
-            for(int to : adj[node]) {
-                if(!visited[to]) {
-                    visited[to] = 1;
-                    q.push(to);
-                }
-            }
-        }
-        distance++;
-    }
 }
 
 void solve(){
     cin >> n;
     adj = vvi(n);
-    distances = vi(n);
-    for(int i; i < n - 1; i++) {
-        int a, b; cin >> a >> b;
+    up1 = vvi(n, vi(LOG));
+    up2 = vvi(n, vi(LOG));
+    depth1 = vi(n);
+    depth2 = vi(n);
+
+    rep(i, n - 1) {
+        int a, b;
+        cin >> a >> b;
         a--, b--;
         adj[a].push_back(b);
         adj[b].push_back(a);
     }
 
-    int firstVertex = calcMostDistant(0);
-    int secondVertex = calcMostDistant(firstVertex);
+    int root1 = mostDistant(0);
+    int root2 = mostDistant(root1);
 
-    calcDistances(firstVertex);
-    calcDistances(secondVertex);
+    dfs(root1, -1, depth1, up1);
+    dfs(root2, -1, depth2, up2);
 
-    rep(i, n) cout << distances[i] << " ";
+    int q; cin >> q;
+    rep(i, q) {
+        int u, k; cin >> u >> k;
+        u--;
+
+        int res = binaryLiftingK(u, k, up1, depth1);
+
+        if(res != -2) cout << res + 1 << '\n';
+        else cout << binaryLiftingK(u, k, up2, depth2) + 1 << '\n';
+    }
 }
 
 int main(){

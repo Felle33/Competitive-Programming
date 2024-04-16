@@ -36,37 +36,15 @@ vector<int> DY = {1, 0, 0, -1};
 string DIR = "RDUL";
 
 int n;
-vvi adj;
-vi distances;
+vector<vector<pair<ll, ll>>> adj;
 queue<int> q;
+vll ans;
 
-int calcMostDistant(int start) {
-    int mostDistant = -1;
+ll calcDistances(int start) {
     vector<bool> visited(n);
 
-    q.push(start);
-    visited[start] = 1;
-
-    while(!q.empty()) {
-        int node = q.front();
-        q.pop();
-        mostDistant = node;
-
-        for(int to : adj[node]) {
-            if(!visited[to]) {
-                visited[to] = 1;
-                q.push(to);
-            }
-        }
-    }
-
-    return mostDistant;
-}
-
-void calcDistances(int start) {
-    vector<bool> visited(n);
-
-    int distance = 0;
+    ll distance = 0;
+    ll sumDistance = 0;
     q.push(start);
     visited[start] = 1;
 
@@ -75,9 +53,10 @@ void calcDistances(int start) {
         while(cycles--) {
             int node = q.front();
             q.pop();
-            distances[node] = max(distances[node], distance);
+            sumDistance += distance;
 
-            for(int to : adj[node]) {
+            for(pair<ll, ll>& p : adj[node]) {
+                int to = p.first;
                 if(!visited[to]) {
                     visited[to] = 1;
                     q.push(to);
@@ -86,26 +65,70 @@ void calcDistances(int start) {
         }
         distance++;
     }
+
+    return sumDistance;
+}
+
+int dfs(int node, int pa) {
+    int totSubtree = 1;
+    for(pair<ll, ll>& p : adj[node]) {
+        int to = p.first;
+        if(to != pa) {
+            int szGroup = dfs(to, node);
+            p.second = szGroup;
+            totSubtree += szGroup;
+        }
+    }
+
+    return totSubtree;
+}
+
+void calcGroups(int node, int pa) {
+    for(pair<ll, ll>& p : adj[node]) {
+        int to = p.first;
+        if(to != pa) {
+            calcGroups(to, node);
+        }
+    }
+
+    int sum = 0;
+    for(pair<ll, ll>& p : adj[node]) {
+        if(p.second != -1) sum += p.second;
+    }
+
+    for(pair<ll, ll>& p : adj[node]) {
+        if(p.second == -1) p.second = n - (sum + 1);
+    }
+}
+
+void calcAns(int node, int pa, ll sum) {
+    ans[node] = sum;
+    for(pair<ll, ll>& p : adj[node]) {
+        int to = p.first;
+        if(to != pa) {
+            calcAns(to, node, sum - p.second + n - p.second);
+        }
+    }
 }
 
 void solve(){
     cin >> n;
-    adj = vvi(n);
-    distances = vi(n);
+    adj = vector<vector<pair<ll, ll>>>(n);
+    ans = vll(n);
     for(int i; i < n - 1; i++) {
         int a, b; cin >> a >> b;
         a--, b--;
-        adj[a].push_back(b);
-        adj[b].push_back(a);
+        adj[a].push_back({b, -1});
+        adj[b].push_back({a, -1});
     }
 
-    int firstVertex = calcMostDistant(0);
-    int secondVertex = calcMostDistant(firstVertex);
+    dfs(0, -1);
+    calcGroups(0, -1);
+    ll distance = calcDistances(0);
+    calcAns(0, -1, distance);
 
-    calcDistances(firstVertex);
-    calcDistances(secondVertex);
-
-    rep(i, n) cout << distances[i] << " ";
+    rep(i, n) cout << ans[i] << " ";
+    
 }
 
 int main(){
