@@ -8,6 +8,7 @@
 #include <set>
 #include <iomanip>
 #include <bitset>
+#include <stack>
 
 #define all(x) (x).begin(), (x).end()
 #define mp make_pair
@@ -34,8 +35,40 @@ const ll LL_MAX = 9223372036854775807;
 const int LOG = 22;
 vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
+string DIR = "RDUL";
 
 void solve(){
+    int n, m; cin >> n >> m;
+
+    vector<vector<ll>> grid(n, vll(m));
+    rep(i, n) {
+        rep(j, m) cin >> grid[i][j];
+    }
+
+    vll heights(m, 1);
+    for(int i = 0; i < n; i++) {
+
+        if(i > 0) {
+            for(int j = 0; j < m; j++) {
+                if(grid[i][j] == grid[i - 1][j]) {
+                    heights[j]++;
+                }
+            }
+        }
+
+        // stack: first position number, second position index
+        stack<pair<ll, ll>> st;
+
+        for(int j = 0; j < m; j++) {
+            while(!st.empty() && st.top().first > grid[i][j]) {
+                pair<ll, ll> p = st.top();
+                st.pop();
+
+                // count the valid rectangles
+            }
+        }
+        
+    }
     
 }
 
@@ -45,10 +78,5 @@ int main(){
     std::cout.precision(10);
     cout << std::fixed;
 
-    int t;
-    cin >> t;
-
-    while(t--){
-        solve();
-    }
+    solve();
 }

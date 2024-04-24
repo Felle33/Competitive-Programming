@@ -35,8 +35,45 @@ const int LOG = 22;
 vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 
+int findIndex(vector<int>& lis, int num) {
+    int l = -1, r = lis.size();
+
+    while(l + 1 < r) {
+        int m = l + (r - l) / 2;
+
+        if(lis[m] >= num) l = m;
+        else r = m;
+    }
+
+    return r;
+}
+
 void solve(){
-    
+    int t = 0;
+    while(1) {
+        int num; cin >> num;
+
+        if(num < 0) return;
+
+        vi missiles;
+        while(num >= 0) {
+            missiles.pb(num);
+            cin >> num;
+        }
+
+        vi lis;
+
+        for(int x : missiles) {
+            if(lis.empty() || lis.back() >= x) lis.pb(x);
+            else {
+                lis[findIndex(lis, x)] = x;
+            }
+        }
+
+        if(t > 0) cout << "\n";
+        cout << "Test #" << t + 1 << ":\n  maximum possible interceptions: " << lis.size() << "\n";
+        t++;
+    }
 }
 
 int main(){
@@ -45,10 +82,8 @@ int main(){
     std::cout.precision(10);
     cout << std::fixed;
 
-    int t;
-    cin >> t;
+    //freopen("catch.in", "r", stdin);
+	//freopen("catch.out", "w", stdout);
 
-    while(t--){
-        solve();
-    }
+    solve();
 }

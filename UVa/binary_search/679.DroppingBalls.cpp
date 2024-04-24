@@ -34,9 +34,21 @@ const ll LL_MAX = 9223372036854775807;
 const int LOG = 22;
 vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
+string DIR = "RDUL";
+
+int d, i;
+
+int droppingBalls(int node, int balls) {
+    if(2 * node < (1 << d)) {
+        if(balls % 2 == 0) return droppingBalls(node * 2 + 1, balls / 2);
+        else return droppingBalls(node * 2, balls / 2 + 1);
+    } else return node;
+}
 
 void solve(){
-    
+    cin >> d >> i;
+
+    cout << droppingBalls(1, i) << '\n';
 }
 
 int main(){

@@ -34,21 +34,41 @@ const ll LL_MAX = 9223372036854775807;
 const int LOG = 22;
 vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
+string DIR = "RDUL";
+
+vector<ll> groups;
 
 void solve(){
-    
+    ll dig; cin >> dig;
+    ll l = 0, r = 1e6;
+
+    while(l + 1 < r) {
+        ll mid = l + (r - l) / 2;
+        ll sum = mid * (mid + 1) / 2;
+
+        if(dig <= sum) {
+            r = mid;
+        } else {
+            l = mid;
+        }
+    }
+
+    cout << (dig - r * (r - 1) / 2) << '\n';
 }
 
 int main(){
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-    std::cout.precision(10);
-    cout << std::fixed;
+    int t; cin >> t;
 
-    int t;
-    cin >> t;
+    groups.push_back(1);
+    for(ll i = 2; i < INT_MAX; i++) {
+        ll digits = 0;
 
-    while(t--){
-        solve();
+        for(int j = 1; j <= i; j *= 10)
+            digits += (i - j + 1);
+
+        groups.push_back(digits + groups[groups.size() - 1]);
     }
+
+    while(t--)
+        solve();
 }

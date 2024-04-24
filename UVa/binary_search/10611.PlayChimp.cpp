@@ -36,7 +36,28 @@ vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 
 void solve(){
-    
+    int n; cin >> n;
+    vll a(n), b(n);
+    rep(i, n) {
+        cin >> a[i];
+        b[i] = -a[i];
+    }
+
+    sort(all(b));
+    int q; cin >> q;
+
+    rep(i, q) {
+        ll h; cin >> h;
+        auto it = upper_bound(all(b), -h);
+        ll first = it == b.end() ? LLINF : -(*it);
+        it = upper_bound(all(a), h);
+        ll second = it == a.end() ? LLINF : *it;
+        if(first == LLINF) cout << 'X' << " ";
+        else cout << first << " ";
+
+        if(second == LLINF) cout << 'X' << '\n';
+        else cout << second << '\n';
+    }
 }
 
 int main(){
@@ -44,11 +65,5 @@ int main(){
     cin.tie(NULL);
     std::cout.precision(10);
     cout << std::fixed;
-
-    int t;
-    cin >> t;
-
-    while(t--){
-        solve();
-    }
+    solve();
 }

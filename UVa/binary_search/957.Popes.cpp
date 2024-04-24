@@ -36,19 +36,34 @@ vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 
 void solve(){
+    ll years, n;
+    while(cin >> years >> n) {
+        vll popes(n);
+        rep(i, n) cin >> popes[i];
+
+        vll ans(3);
+        for(int i = 0; i < n; i++) {
+            auto it = upper_bound(popes.begin(), popes.end(), popes[i] + years - 1);
+            ll pop = it - popes.begin();
+            ll newAns = pop - i;
+            if(newAns > ans[0]) {
+                ans[0] = newAns;
+                ans[1] = popes[i];
+                it--;
+                ans[2] = *it;
+            }
+        }
+
+        cout << ans[0] << " " << ans[1] << " " << ans[2] << '\n';
+    }
     
 }
 
 int main(){
-    ios_base::sync_with_stdio(false);
+    /*ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     std::cout.precision(10);
-    cout << std::fixed;
+    cout << std::fixed;*/
 
-    int t;
-    cin >> t;
-
-    while(t--){
-        solve();
-    }
+    solve();
 }

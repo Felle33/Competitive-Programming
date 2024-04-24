@@ -8,6 +8,7 @@
 #include <set>
 #include <iomanip>
 #include <bitset>
+#include <stack>
 
 #define all(x) (x).begin(), (x).end()
 #define mp make_pair
@@ -34,9 +35,42 @@ const ll LL_MAX = 9223372036854775807;
 const int LOG = 22;
 vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
+string DIR = "RDUL";
 
 void solve(){
-    
+    int n; cin >> n;
+    vector<int> start(n + 1, INF), end(n + 1, -1), colors(n + 1);
+
+    for(int i = 1; i <= n; i++) {
+        int col; cin >> col;
+        colors[i] = col;
+        start[col] = min(start[col], i);
+        end[col] = max(end[col], i);
+    }
+
+    stack<int> st;
+    int ans = 0;
+    start[0] = 0;
+    end[0] = n + 1;
+    for(int i = 0; i <= n; i++) {
+        int col = colors[i];
+
+        if(i == start[col]) {
+            st.push(col);
+            ans = max(ans, (int)st.size());
+        }
+
+        if(col != st.top()) {
+            cout << -1 << '\n';
+            return;
+        }
+
+        if(i == end[col]) {
+            st.pop();
+        }
+    }
+
+    cout << ans - 1 << '\n';
 }
 
 int main(){
@@ -45,10 +79,7 @@ int main(){
     std::cout.precision(10);
     cout << std::fixed;
 
-    int t;
-    cin >> t;
-
-    while(t--){
-        solve();
-    }
+    freopen("art2.in", "r", stdin);
+	freopen("art2.out", "w", stdout);
+    solve();
 }
