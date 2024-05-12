@@ -17,16 +17,12 @@ typedef long long ll;
 using namespace std;
 
 struct DSU {
-	int n;
-	vector<int> p;
-    vector<unsigned int> r;
+	int n; vector<int> p; vector<unsigned int> r;
 
 	DSU() {}
 
     DSU(int N) {
-        p = vector<int>(N);
-        r = vector<unsigned int>(N, 1);
-
+        p = vector<int>(N); r = vector<unsigned int>(N, 1);
         for(int i = 0; i < N; i++){
             p[i] = i;
         }
@@ -37,22 +33,15 @@ struct DSU {
     bool unite(int x, int y) {
         x = get(x), y = get(y);
         if(x == y) return false;
-        if(r[x] == r[y]) 
-            r[x]++;
+        if(r[x] == r[y]) r[x]++;
         
         if(r[x] > r[y]){
 			p[y] = x;
-		}
-        else {
+		} else {
 			p[x] = y;
 		}  
         return true;
     }
 
-    void reset() {
-		for(int i = 0; i < n; i++){
-            p[i] = i;
-			r[i] = 1;
-        }
-	}
+    void reset() { rep(i, n) {p[i] = i; r[i] = 1;} }
 };

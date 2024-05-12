@@ -36,7 +36,8 @@ vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 
 void solve(){
-    
+    int x, y; cin >> x >> y;
+    cout << min(x, y) << " " << max(x, y) << "\n";
 }
 
 int main(){

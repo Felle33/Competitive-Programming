@@ -35,8 +35,36 @@ const int LOG = 22;
 vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 
+bool allChars(string& s) {
+    char d = s[0];
+    for(char c : s) if(c != d) return false;
+    return  true;
+}
+
 void solve(){
-    
+    string s; cin >> s;
+
+    if(allChars(s)) {
+        cout << "NO\n";
+        return;
+    }
+
+    int n = s.size();
+    char first = s[0];
+    char firstDif;
+    int idx;
+    for(int i = 1; i < n; i++) {
+        char c = s[i];
+        if(c != first) {
+            firstDif = c;
+            idx = i;
+            break;
+        }
+    }
+
+    s[0] = firstDif;
+    s[idx] = first;
+    cout << "YES\n" << s << "\n";
 }
 
 int main(){

@@ -35,8 +35,26 @@ const int LOG = 22;
 vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 
+int reductOne(int a) {
+    a--;
+    if(a < 0) a += 12;
+    return a;
+}
+
 void solve(){
-    
+    int a, b, c, d; cin >> a >> b >> c >> d;
+    a = reductOne(a); b = reductOne(b); c = reductOne(c); d = reductOne(d);
+    if(a > b) swap(a, b);
+    int inter = 0;
+    for(int i = (a + 1) % 12; i < b; ) {
+        if(i == c || i == d) {
+            inter++;
+        }
+        i++; i %= 12;
+    }
+
+    if(inter == 0 || inter == 2) cout << "NO\n";
+    else cout << "YES\n";
 }
 
 int main(){
