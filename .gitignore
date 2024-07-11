@@ -2,4 +2,4 @@
 *.in
 *.out
 .vscode
-prove/
+prove/*
