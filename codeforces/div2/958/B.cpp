@@ -36,38 +36,24 @@ vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 
 void solve(){
-    ll n; cin >> n;
-    ll cnt = 0;
-    vector<pair<ll, ll>> ans;
-    int digits;
+    int n; cin >> n;
+    string s; cin >> s;
 
-    if(n < 10) digits = 1;
-    else if(n < 100) digits = 2;
-    else digits = 3;
-
-    string s = to_string(n);
-    s += s; s += s; s += s; s += s;
-
-    for(ll a = 1; a <= 1e4; a++) {
-        ll letters = digits * a;
-        ll val = 0;
-        for(int final_size = 1; final_size <= 7; final_size++) {
-            ll b = letters - final_size;
-            if(b <= 0) continue;
-
-            val = 10 * val + s[final_size - 1] - '0';
-            ll res1 = n * a - b;
-
-            if(res1 == val) {
-                cnt++;
-                ans.pb({a, b});
-            }
+    int ones = 0, zeroes = 0;
+    for(int i = 0; i < n; ) {
+        if(s[i] == '1') {
+            ones++;
+            i++;
+        } else {
+            zeroes++;
+            while(i < n && s[i] == '0') i++;
         }
     }
 
-    cout << cnt << "\n";
-    for(pair<ll, ll>& p : ans) {
-        cout << p.first << " " << p.second << "\n";
+    if(ones > zeroes) {
+        cout << "YES\n";
+    } else {
+        cout << "NO\n";
     }
 }
 

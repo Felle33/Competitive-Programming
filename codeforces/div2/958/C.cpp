@@ -35,40 +35,47 @@ const int LOG = 22;
 vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 
+ll n;
+
 void solve(){
-    ll n; cin >> n;
-    ll cnt = 0;
-    vector<pair<ll, ll>> ans;
-    int digits;
+    cin >> n;
 
-    if(n < 10) digits = 1;
-    else if(n < 100) digits = 2;
-    else digits = 3;
+    if(__builtin_popcount(n) == 1) {
+        cout << 1 << "\n" << n << "\n";
+        return;
+    }
 
-    string s = to_string(n);
-    s += s; s += s; s += s; s += s;
-
-    for(ll a = 1; a <= 1e4; a++) {
-        ll letters = digits * a;
-        ll val = 0;
-        for(int final_size = 1; final_size <= 7; final_size++) {
-            ll b = letters - final_size;
-            if(b <= 0) continue;
-
-            val = 10 * val + s[final_size - 1] - '0';
-            ll res1 = n * a - b;
-
-            if(res1 == val) {
-                cnt++;
-                ans.pb({a, b});
+    ll idxfirst = -1, idxPen;
+    for(ll i = 0; i < 61; i++) {
+        if((1ll << i) & n) {
+            if(idxfirst != -1) {
+                idxPen = idxfirst;
+                idxfirst = i;
+            } else {
+                idxfirst = i;
             }
         }
     }
 
-    cout << cnt << "\n";
-    for(pair<ll, ll>& p : ans) {
-        cout << p.first << " " << p.second << "\n";
+    vll ans;
+    ll firstNumber = 1 << idxPen;
+    ll secondNumber = n ^ firstNumber;
+    ans.pb(firstNumber); ans.pb(secondNumber);
+    ll lastNumber = secondNumber;
+
+    for(ll i = idxPen - 1, lastOne = idxPen; i >= 0; i--) {
+        if((1ll << i) & lastNumber) {
+            lastNumber = lastNumber ^ (1 << i);
+            lastNumber = lastNumber ^ (1 << lastOne);
+            ans.pb(lastNumber);
+            lastOne = i;
+        }
     }
+    ans.pb(n);
+
+    cout << ans.size() << "\n";
+    for(int x : ans) cout << x << " ";
+    cout << "\n";
 }
 
 int main(){

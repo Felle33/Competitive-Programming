@@ -36,39 +36,39 @@ vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
 
 void solve(){
-    ll n; cin >> n;
-    ll cnt = 0;
-    vector<pair<ll, ll>> ans;
-    int digits;
+    int n; cin >> n;
 
-    if(n < 10) digits = 1;
-    else if(n < 100) digits = 2;
-    else digits = 3;
+    vector<pii> a(n);
+    rep(i, n) cin >> a[i].first;
+    rep(i, n) cin >> a[i].second;
 
-    string s = to_string(n);
-    s += s; s += s; s += s; s += s;
-
-    for(ll a = 1; a <= 1e4; a++) {
-        ll letters = digits * a;
-        ll val = 0;
-        for(int final_size = 1; final_size <= 7; final_size++) {
-            ll b = letters - final_size;
-            if(b <= 0) continue;
-
-            val = 10 * val + s[final_size - 1] - '0';
-            ll res1 = n * a - b;
-
-            if(res1 == val) {
-                cnt++;
-                ans.pb({a, b});
-            }
+    int movie1= 0, movie2 = 0;
+    vi used(n);
+    for(int i = 0; i < n; i++) {
+        pii p = a[i];
+        if(p.first > p.second) {
+            movie1 += p.first;
+            used[i] = 1;
+        } else if(p.second > p.first) {
+            movie2 += p.second;
+            used[i] = 1;
         }
     }
 
-    cout << cnt << "\n";
-    for(pair<ll, ll>& p : ans) {
-        cout << p.first << " " << p.second << "\n";
+    // rimangono 1,1 o -1,-1 o 0,0
+    for(int i = 0; i < n; i++) {
+        if(used[i]) continue;
+        pii p = a[i];
+        if(p.first == 1) {
+            if(movie1 > movie2) movie2++;
+            else movie1++;
+        } else if(p.first == -1){
+            if(movie1 > movie2) movie1--;
+            else movie2--;
+        }
     }
+
+    cout << min(movie1, movie2) << "\n";
 }
 
 int main(){
