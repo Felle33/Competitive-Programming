@@ -32,17 +32,48 @@ const int INF = 1e9;
 const ll LLINF = 1e15;
 const ll LL_MAX = 9223372036854775807;
 const int LOG = 22;
-vector<int> DX = {0, 1, -1, 0};
-vector<int> DY = {1, 0, 0, -1};
+
+int n, k, p1, p2;
+
+ll compute(vi& next_node, vll& points, int initial_node, ll k) {
+    vector<bool> visited(n + 1);
+    int node = initial_node;
+    ll ans = 0;
+    ll path = 0;
+
+    while(!visited[node] && k > 0) {
+        visited[node] = 1;
+        ans = max(ans, path + k * points[node]);
+        path += points[node];
+        node = next_node[node];
+        k--;
+    }
+
+    return ans;
+}
 
 void solve(){
-    int n; cin >> n;
+    cin >> n >> k >> p1 >> p2;
 
-    vi a(n);
-    rep(i, n) cin >> a[i];
+    vector<int> next_node(n + 1);
+    vll points(n + 1);
+    rep(i, n) {
+        cin >> next_node[i + 1];
+    }
 
-    sort(all(a));
-    
+    rep(i, n) {
+        cin >> points[i + 1];
+    }
+
+    ll points_bo = compute(next_node, points, p1, k), points_sa = compute(next_node, points, p2, k);
+
+    if(points_bo > points_sa) {
+        cout << "Bodya\n";
+    } else if(points_bo < points_sa) {
+        cout << "Sasha\n";
+    } else {
+        cout << "Draw\n";
+    }
 }
 
 int main(){

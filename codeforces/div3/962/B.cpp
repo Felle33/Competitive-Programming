@@ -31,8 +31,33 @@ const ll LLINF = 1e15;
 const ll LL_MAX = 9223372036854775807;
 const int LOG = 22;
 
+int n, k;
+vector<vector<char>> grid;
+
+int compute(int starti, int startj) {
+    return grid[starti][startj] - '0';
+}
+
 void solve(){
-    
+    cin >> n >> k;
+    grid = vector<vector<char>>(n, vector<char>(n));
+    rep(i, n) {
+        rep(j, n) cin >> grid[i][j];
+    }
+
+    vector<vector<int>> ans;
+    for(int i = 0; i < n; i += k) {
+        vector<int> row;
+        for(int j = 0; j < n; j += k) {
+            row.push_back(compute(i, j));
+        }
+        ans.push_back(row);
+    }
+
+    for(vector<int>& row : ans) {
+        for(int x : row) cout << x;
+        cout << "\n";
+    }
 }
 
 int main(){

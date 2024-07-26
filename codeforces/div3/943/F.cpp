@@ -32,7 +32,26 @@ const ll LL_MAX = 9223372036854775807;
 const int LOG = 22;
 
 void solve(){
-    
+    int n, q; cin >> n >> q;
+    vi a(n), b(n + 1);
+    map<int, vector<int>> mp;
+    rep(i, n) {
+        cin >> a[i];
+        b[i + 1] = b[i] ^ a[i];
+        mp[b[i + 1]].push_back(i);
+    }
+
+    rep(i, q) {
+        int l, r; cin >> l >> q;
+        // to have r included b[r + 1] for left
+        // to have r excluded b[r] for left
+        l--, r--;
+        if(b[r + 1] == b[l]) {
+            cout << "YES\n";
+        } else {
+            auto it1 = 
+        }
+    }
 }
 
 int main(){

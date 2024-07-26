@@ -4,7 +4,6 @@
 #include <vector>
 #include <queue>
 #include <cstring>
-#include <unordered_map>
 #include <map>
 #include <set>
 #include <iomanip>
@@ -15,6 +14,7 @@
 #define pb push_back
 #define rep(X,Y) for (int (X) = 0;(X) < (Y);++(X))
 #define reps(X,S,Y) for (int (X) = S;(X) < (Y);++(X))
+#define FELLE ios_base::sync_with_stdio(false); cin.tie(NULL); std::cout.precision(10); cout << std::fixed;
 
 using namespace std;
 typedef vector<int> vi;
@@ -24,62 +24,55 @@ typedef vector<vector<int>> vvi;
 typedef long long ll;
 typedef pair<int,int> pii;
 
-const ll MOD = 1e9 + 7;
+const ll MOD1 = 1e9 + 7;
+const ll MOD2 = 998244353;
+const ll MOD3 = 99999999999999997;
 const ll DIM = 1e6;
-const ll INF = 1e15;
+const int INF = 1e9;
+const ll LLINF = 1e15;
 const ll LL_MAX = 9223372036854775807;
+const int LOG = 22;
 vector<int> DX = {0, 1, -1, 0};
 vector<int> DY = {1, 0, 0, -1};
-string DIR = "RDUL";
 
 void solve(){
-    int n; cin >> n;
+    int n;
+    ll m;
+    cin >> n >> m;
+
     vll a(n);
     rep(i, n) cin >> a[i];
 
-    if(n == 1) {
-        cout << 0 << '\n';
+    sort(all(a));
+
+    if(m < a[0]) {
+        cout << 0 << "\n";
         return;
     }
 
+    ll curSum = 0;
     ll ans = 0;
-    ll last = 0;
-    for(int i = 1; i < n; i++) {
-        ll prev = a[i - 1];
-        ll cur = a[i];
-        ll op = 0;
-
-        if(cur <= prev) {
-            while(cur < prev) {
-                op++;
-                cur *= 2;
-            }
-            ans += last + op;
-            last = op + last;
-        } else {
-            while(prev < cur) {
-                op++;
-                prev *= 2;
-            }
-
-            ans += max(last - op + (prev != cur), 0ll);
-            last = max(last - op + (prev != cur), 0ll);
+    for(int l = 0, r = 0; r < n; ) {
+        if(m < a[r]) break;
+        while(r < n && a[r] - a[l] <= 1 && curSum + a[r] <= m) {
+            curSum += a[r];
+            r++;
         }
-        
+
+        ans = max(ans, curSum);
+
+        while(l < r && (a[r] - a[l] > 1 || curSum + a[r] > m)) {
+            curSum -= a[l];
+            l++;
+        }
     }
 
-    cout << ans << '\n';
+    cout << ans << "\n";
 }
 
 int main(){
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-    std::cout.precision(10);
-    cout << std::fixed;
-
-    int t;
-    cin >> t;
-
+    FELLE
+    int t; cin >> t;
     while(t--){
         solve();
     }

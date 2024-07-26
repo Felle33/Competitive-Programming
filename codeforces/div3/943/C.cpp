@@ -10,6 +10,8 @@
 #include <bitset>
 
 #define all(x) (x).begin(), (x).end()
+#define mp make_pair
+#define pb push_back
 #define rep(X,Y) for (int (X) = 0;(X) < (Y);++(X))
 #define reps(X,S,Y) for (int (X) = S;(X) < (Y);++(X))
 #define FELLE ios_base::sync_with_stdio(false); cin.tie(NULL); std::cout.precision(10); cout << std::fixed;
@@ -32,7 +34,15 @@ const ll LL_MAX = 9223372036854775807;
 const int LOG = 22;
 
 void solve(){
-    
+    int n; cin >> n;
+    int val = 501;
+    cout << val << " ";
+    for(int i = 0; i < n - 1; i++) {
+        int x; cin >> x;
+        val += x;
+        cout << val << " ";
+    }
+    cout << "\n";
 }
 
 int main(){

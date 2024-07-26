@@ -32,7 +32,10 @@ const ll LL_MAX = 9223372036854775807;
 const int LOG = 22;
 
 void solve(){
-    
+    int legs; cin >> legs;
+    int cows = legs / 4;
+    int chicken = (legs % 4) / 2;
+    cout << (cows + chicken) << "\n";
 }
 
 int main(){

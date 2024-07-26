@@ -30,9 +30,30 @@ const int INF = 1e9;
 const ll LLINF = 1e15;
 const ll LL_MAX = 9223372036854775807;
 const int LOG = 22;
+const int LETTERS = 26;
 
 void solve(){
-    
+    string s;
+    cin >> s;
+    ll n = s.size();
+    map<int, ll> mp;
+    int dif = 0;
+    mp[0] = 1;
+    ll ans = 0;
+    for(ll i = 0; i < n; i++) {
+        int ch = s[i] - '0';
+        if(ch == 0) {
+            dif--;
+        } else {
+            dif++;
+        }
+        ans = ans + ((n - i) * mp[dif]) % MOD1;
+        ans %= MOD1;
+        mp[dif] += i + 2;
+        mp[dif] %= MOD1;
+    }
+
+    cout << ans << "\n";
 }
 
 int main(){
