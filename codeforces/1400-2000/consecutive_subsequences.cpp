@@ -24,6 +24,7 @@ typedef pair<int,int> pii;
 
 const ll MOD1 = 1e9 + 7;
 const ll MOD2 = 998244353;
+const ll MOD3 = 99999999999999997;
 const ll DIM = 1e6;
 const int INF = 1e9;
 const ll LLINF = 1e15;
@@ -31,13 +32,38 @@ const ll LL_MAX = 9223372036854775807;
 const int LOG = 22;
 
 void solve(){
-    
+    int n; cin >> n;
+    vi nums(n);
+    map<int, int> dp;
+    int ans = 0, curr = 0;
+    rep(i, n) {
+        int a; cin >> a;
+        nums[i] = a;
+        if(dp[a] < dp[a - 1] + 1) {
+            dp[a] = dp[a - 1] + 1;
+            
+            if(ans < dp[a]) {
+                ans = dp[a];
+                curr = a;
+            }
+        }
+    }
+
+    cout << ans << "\n";
+    vi ans_v;
+    for(int i = n - 1, j = ans; i >= 0 && j > 0; i--) {
+        if(nums[i] == curr) {
+            ans_v.push_back(i + 1);
+            curr--;
+            j--;
+        }
+    }
+
+    reverse(all(ans_v));
+    rep(i, ans) cout << ans_v[i] << " ";
 }
 
 int main(){
     FELLE
-    int t; cin >> t;
-    while(t--){
-        solve();
-    }
+    solve();
 }

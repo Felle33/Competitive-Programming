@@ -24,6 +24,7 @@ typedef pair<int,int> pii;
 
 const ll MOD1 = 1e9 + 7;
 const ll MOD2 = 998244353;
+const ll MOD3 = 99999999999999997;
 const ll DIM = 1e6;
 const int INF = 1e9;
 const ll LLINF = 1e15;
@@ -31,13 +32,39 @@ const ll LL_MAX = 9223372036854775807;
 const int LOG = 22;
 
 void solve(){
+    int n; cin >> n;
+    vi a(n);
+    rep(i, n) cin >> a[i];
+
+    int ans = 0;
+
+    vvi dp(n, vi(n));
+
+    for(int k = 0; k < n; k++) {
+        for(int i = 0, j = k; j < n; i++, j++) {
+            if(k == 0) {
+                dp[i][j] = a[i];
+                ans = max(ans, a[i]);
+            } else {
+                dp[i][j] = -1;
+                for(int l = i; l < j; l++) {
+                    if(dp[i][l] == -1 || dp[l + 1][j] == -1) continue;
+
+                    if(dp[i][l] == dp[l + 1][j]) {
+                        dp[i][j] = max(dp[i][j], dp[i][l] + 1);
+                        ans = max(ans, dp[i][j]);
+                    }
+                }
+            }
+        }
+    }
     
+    cout << ans << "\n";
 }
 
 int main(){
     FELLE
-    int t; cin >> t;
-    while(t--){
-        solve();
-    }
+    freopen("248.in", "r", stdin);
+	freopen("248.out", "w", stdout);
+    solve();
 }
