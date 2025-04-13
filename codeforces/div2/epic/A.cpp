@@ -33,7 +33,31 @@ vector<int> DI = {0, 1, -1, 0};
 vector<int> DJ = {1, 0, 0, -1};
 
 void solve(){
-    
+    int n, m, k; cin >> n >> m >> k;
+    int colors = 0;
+    int am = 1;
+
+    int i = 0;
+    for(; i < k && i < n && i < m; i++) {
+        colors += am;
+        am += 2;
+    }
+
+    if(i == k) {
+        cout << colors << "\n";
+    } else if(i == n) {
+        for(; i < m && i < k; i++) {
+            colors += n;
+        }
+
+        cout << colors << "\n";
+    } else {
+        for(; i < n && i < k; i++) {
+            colors += m;
+        }
+
+        cout << colors << "\n";
+    }
 }
 
 int main(){

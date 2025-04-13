@@ -33,7 +33,22 @@ vector<int> DI = {0, 1, -1, 0};
 vector<int> DJ = {1, 0, 0, -1};
 
 void solve(){
-    
+    int xc, yc, k; cin >> xc >> yc >> k;
+
+    vector<pair<int, int>> res;
+    if(k % 2 == 1) {
+        k--;
+        res.push_back({xc, yc});
+    }
+
+    for(int i = 1, num = k; num > 0; num -= 2, i++) {
+        res.push_back({xc + i, yc});
+        res.push_back({xc - i, yc});
+    }
+
+    for(pii& p : res) {
+        cout << p.first << " " << p.second << "\n";
+    }
 }
 
 int main(){

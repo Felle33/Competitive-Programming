@@ -33,7 +33,14 @@ vector<int> DI = {0, 1, -1, 0};
 vector<int> DJ = {1, 0, 0, -1};
 
 void solve(){
+    int n; cin >> n;
+    vi a(n);
+    rep(i, n) cin >> a[i];
     
+    for(int i = 1; i < n; i++) {
+        cout << a[i] << " ";
+    }
+    cout << a[0] << "\n";
 }
 
 int main(){

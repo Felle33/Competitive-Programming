@@ -33,13 +33,31 @@ vector<int> DI = {0, 1, -1, 0};
 vector<int> DJ = {1, 0, 0, -1};
 
 void solve(){
-    
+    ll n, x; cin >> n >> x;
+    ll tot = 0;
+    priority_queue<ll, vector<ll>, greater<ll>> pq;
+    rep(i, n) {
+        ll l; cin >> l;
+        pq.push(l);
+        tot += l;
+    }
+
+    if(tot < x) {
+        pq.push(x - tot);
+    }
+
+    ll ans = 0;
+    while(pq.size() > 1) {
+        ll l = pq.top(); pq.pop();
+        ll r = pq.top(); pq.pop();
+        ans += l + r;
+        pq.push(l + r);
+    }
+
+    cout << ans << "\n";
 }
 
 int main(){
     FELLE
-    int t; cin >> t;
-    while(t--){
-        solve();
-    }
+    solve();
 }

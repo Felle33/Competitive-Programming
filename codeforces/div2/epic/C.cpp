@@ -32,8 +32,30 @@ const int LOG = 22;
 vector<int> DI = {0, 1, -1, 0};
 vector<int> DJ = {1, 0, 0, -1};
 
+ll dis(pair<ll, ll>& p1, pair<ll, ll>& p2) {
+    ll difX = p1.first - p2.first;
+    ll difY = p1.second - p2.second;
+    return difX * difX + difY * difY;
+}
+
 void solve(){
-    
+    int n; cin >> n;
+    vector<pair<ll, ll>> circles(n);
+    rep(i, n) cin >> circles[i].first >> circles[i].second;
+    pair<ll, ll> pl, dest;
+    cin >> pl.first >> pl.second >> dest.first >> dest.second;
+
+    ll minDis = dis(circles[0], dest);
+
+    for(pair<ll, ll>& point : circles) {
+        minDis = min(minDis, dis(point, dest));
+    }
+
+    if(dis(pl, dest) < minDis) {
+        cout << "YES\n";
+    } else {
+        cout << "NO\n";
+    }
 }
 
 int main(){

@@ -63,7 +63,7 @@ void solve(){
     int n, q;
     string s;
     cin >> n >> q >> s;
-    int deletedChar = 0;
+    int start = 0;
 
     while(q--){
         int o;
@@ -72,13 +72,15 @@ void solve(){
         if(o == 1){
             int x;
             cin >> x;
-            deletedChar += x;
-            deletedChar = deletedChar % n;
+            start -= x;
+            if(start < 0) {
+                start += n;
+            }
         }else{
             int x;
             cin >> x;
             x--;
-            cout << s[(x - deletedChar + n) % n] << '\n';
+            cout << s[(start + x) % n] << '\n';
         }
     }
 }

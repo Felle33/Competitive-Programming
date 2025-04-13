@@ -33,7 +33,19 @@ vector<int> DI = {0, 1, -1, 0};
 vector<int> DJ = {1, 0, 0, -1};
 
 void solve(){
-    
+    string s; cin >> s;
+    if(s.size() < 3) {
+        cout << "NO\n";
+        return;
+    }
+    string first_num = s.substr(0, 2);
+    string sec_num = s.substr(2, s.size() - 2);
+
+    if(stoi(first_num) != 10 || (sec_num[0] == '0' && sec_num.size() > 1) || stoi(sec_num) < 2) {
+        cout << "NO\n";
+    } else {
+        cout << "YES\n";
+    }
 }
 
 int main(){

@@ -33,7 +33,30 @@ vector<int> DI = {0, 1, -1, 0};
 vector<int> DJ = {1, 0, 0, -1};
 
 void solve(){
-    
+    int n; cin >> n;
+    vi a(n);
+    rep(i, n) {
+        int b; cin >> b;
+        b--; a[i] = b;
+    }
+    vector<bool> seats(n);
+    bool flag = 1;
+    for(int i = 0; i < n; i++) {
+        if(i == 0) seats[a[i]] = 1;
+        else {
+            if(a[i] == 0) {
+                flag &= seats[1];
+            } else if(a[i] == n - 1) {
+                flag &= seats[n - 2];
+            } else {
+                flag &= (seats[a[i] - 1] | seats[a[i] + 1]);
+            }
+            seats[a[i]] = 1;
+        }
+    }
+
+    if(flag) cout << "YES\n";
+    else cout << "NO\n";
 }
 
 int main(){

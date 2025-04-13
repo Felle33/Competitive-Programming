@@ -33,13 +33,28 @@ vector<int> DI = {0, 1, -1, 0};
 vector<int> DJ = {1, 0, 0, -1};
 
 void solve(){
-    
+    int n, q; cin >> n >> q;
+    map<int, vector<int>> mp;
+
+    rep(i, n) {
+        int x; cin >> x;
+        mp[x].push_back(i);
+    }
+
+    rep(i, q) {
+        int x, k;
+        cin >> x >> k;
+
+        if(mp.count(x) == 0 || k > mp[x].size()) {
+            cout << -1 << "\n";
+        } else {
+            int ans = (mp[x][k - 1] + 1);
+            cout << ans << "\n";
+        }
+    }
 }
 
 int main(){
     FELLE
-    int t; cin >> t;
-    while(t--){
-        solve();
-    }
+    solve();
 }

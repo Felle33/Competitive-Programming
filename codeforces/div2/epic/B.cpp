@@ -32,8 +32,36 @@ const int LOG = 22;
 vector<int> DI = {0, 1, -1, 0};
 vector<int> DJ = {1, 0, 0, -1};
 
+int n;
+
+bool allEq(vi& a, vi& b) {
+    for(int i = 0; i < n; i++) {
+        if(a[i] != b[i]) return 0;
+    }
+    return 1;
+}
+
+bool allRev(vi& a, vi& b) {
+    for(int i = 0, j = n - 1; i < n; i++, j--) {
+        if(a[i] != b[j]) return 0;
+    }
+    return 1;
+}
+
 void solve(){
-    
+    cin >> n;
+    vi a(n), b(n);
+    rep(i, n) cin >> a[i];
+    rep(i, n) cin >> b[i];
+
+    bool bobWins = 0;
+
+    if(allEq(a, b) || allRev(a, b)) {
+        bobWins = 1;
+    }
+
+    if(!bobWins) cout << "Alice\n";
+    else cout << "Bob\n";
 }
 
 int main(){

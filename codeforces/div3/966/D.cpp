@@ -33,7 +33,31 @@ vector<int> DI = {0, 1, -1, 0};
 vector<int> DJ = {1, 0, 0, -1};
 
 void solve(){
-    
+    int n; cin >> n;
+    vll a(n);
+    string s;
+    rep(i, n) cin >> a[i];
+    cin >> s;
+
+    vll pref(n);
+    pref[0] = a[0];
+    for(int i = 1; i < n; i++) pref[i] = pref[i - 1] + a[i];
+
+    priority_queue<int> pq;
+    for(int i = 0; i < n; i++) {
+        if(s[i] == 'R') pq.push(i);
+    }
+
+    ll ans = 0;
+    for(int i = 0; i < n; i++) {
+        if(s[i] == 'L') {
+            if(pq.empty() || pq.top() < i) break;
+            int top = pq.top(); pq.pop();
+            ans += pref[top] - (i == 0 ? 0 : pref[i - 1]);
+        }
+    }
+
+    cout << ans << "\n";
 }
 
 int main(){
